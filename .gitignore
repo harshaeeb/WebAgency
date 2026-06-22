@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.astro/
+
+# Environment variables (Resend/Twilio keys, etc.) — never commit these
+.env
+.env.*
+!.env.example
+
+# Editor/OS
+.DS_Store
+.vscode/
+*.log
