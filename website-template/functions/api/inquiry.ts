@@ -20,12 +20,14 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^\+?[\d\s\-().]{7,20}$/;
 
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
-  // CSRF guard: only accept requests originating from this site.
-  const origin = request.headers.get("origin") ?? "";
-  const siteOrigin = new URL(site.url).origin;
-  // Allow same-origin and local dev (localhost / 127.0.0.1).
-  const isLocalDev = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
-  if (!isLocalDev && origin !== siteOrigin) {
+  // CSRF guard: the form's Origin must match the host serving this function.
+  // Using request.url (the Function's own URL) rather than site.url means this
+  // works correctly on any domain — pages.dev previews, custom domains, localhost —
+  // without any config change per deployment.
+  const incomingOrigin = request.headers.get("origin") ?? "";
+  const expectedOrigin = new URL(request.url).origin;
+  const isLocalDev = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(incomingOrigin);
+  if (!isLocalDev && incomingOrigin !== expectedOrigin) {
     return jsonResponse({ ok: false, error: "Forbidden." }, 403);
   }
 
