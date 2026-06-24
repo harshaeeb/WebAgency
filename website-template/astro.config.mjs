@@ -1,16 +1,14 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-
 import tailwindcss from '@tailwindcss/vite';
-
 import sitemap from '@astrojs/sitemap';
+import { site } from './src/config/site.ts';
 
-// IMPORTANT: `site` must be set to the client's real production domain
-// before launch — Astro needs it to generate correct absolute URLs in the
-// sitemap and canonical tags. Update this on every new client build.
-// https://astro.build/config
+// `site.url` in site.ts is the single source of truth for the production domain.
+// Astro needs it here for the sitemap and canonical URLs — keep them in sync by
+// reading directly from site.ts rather than duplicating the value here.
 export default defineConfig({
-  site: 'https://example.com',
+  site: site.url,
 
   vite: {
     plugins: [tailwindcss()]

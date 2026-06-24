@@ -20,6 +20,7 @@ export interface Service {
 export interface SiteConfig {
   business: string;
   tagline: string;
+  url: string;         // production domain, e.g. "https://smithplumbing.com" — must match astro.config.mjs `site:`
   phone: string;
   phoneDisplay: string;  // human-friendly formatting, e.g. "(972) 555-0148"
   email: string;
@@ -49,6 +50,7 @@ export interface SiteConfig {
 export const site: SiteConfig = {
   business: "Smith Plumbing Co.",
   tagline: "Fast, honest plumbing for Frisco and the North Dallas area",
+  url: "https://smithplumbing.com",
   phone: "+19725550148",
   phoneDisplay: "(972) 555-0148",
   email: "smith@smithplumbing.com",
@@ -98,3 +100,35 @@ export const site: SiteConfig = {
   calLink: "",
   ownerCell: "",
 };
+
+// Called from Base.astro at build time. Throws immediately if required fields
+// are missing or still set to template placeholder values, so a misconfigured
+// client build fails loudly during development rather than silently in prod.
+export function validateConfig(config: SiteConfig): void {
+  const PLACEHOLDER_URL = "https://example.com";
+  const required: Array<keyof SiteConfig> = [
+    "business", "tagline", "url", "phone", "phoneDisplay",
+    "email", "emailDomain", "address", "city", "state", "zip",
+  ];
+  for (const key of required) {
+    const value = config[key];
+    if (!value || (typeof value === "string" && value.trim() === "")) {
+      throw new Error(`[site.ts] Missing required field: "${key}". Fill it in before building.`);
+    }
+  }
+  if (config.url === PLACEHOLDER_URL) {
+    throw new Error(
+      `[site.ts] "url" is still set to "${PLACEHOLDER_URL}". ` +
+      "Update it to the client's real domain and match astro.config.mjs."
+    );
+  }
+  if (config.services.length === 0) {
+    throw new Error(`[site.ts] "services" array is empty. Add at least one service.`);
+  }
+  if (config.features.booking && !config.calLink) {
+    throw new Error(`[site.ts] features.booking is true but "calLink" is empty.`);
+  }
+  if (config.features.smsForwarding && !config.ownerCell) {
+    throw new Error(`[site.ts] features.smsForwarding is true but "ownerCell" is empty.`);
+  }
+}

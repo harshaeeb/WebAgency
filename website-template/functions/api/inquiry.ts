@@ -12,15 +12,23 @@
 // Hosting Strategy document for the reasoning.
 
 import { site } from "../../src/config/site";
+import type { Env } from "../../src/types/env";
 
-interface Env {
-  RESEND_API_KEY: string;
-  TWILIO_ACCOUNT_SID?: string;
-  TWILIO_AUTH_TOKEN?: string;
-  TWILIO_FROM_NUMBER?: string;
-}
+// Loose but effective format checks — full RFC validation is overkill here.
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Accepts 10-digit US numbers in any common format, or E.164 international.
+const PHONE_RE = /^\+?[\d\s\-().]{7,20}$/;
 
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
+  // CSRF guard: only accept requests originating from this site.
+  const origin = request.headers.get("origin") ?? "";
+  const siteOrigin = new URL(site.url).origin;
+  // Allow same-origin and local dev (localhost / 127.0.0.1).
+  const isLocalDev = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+  if (!isLocalDev && origin !== siteOrigin) {
+    return jsonResponse({ ok: false, error: "Forbidden." }, 403);
+  }
+
   try {
     const formData = await request.formData();
 
@@ -29,13 +37,28 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     const email = (formData.get("email") || "").toString().trim();
     const message = (formData.get("message") || "").toString().trim();
     const photo = formData.get("photo"); // File | null
+    // Honeypot: bots fill hidden fields, humans leave them blank.
+    const honeypot = (formData.get("_hp") || "").toString().trim();
 
-    // --- Basic validation ---
+    if (honeypot) {
+      // Silently succeed so bots don't know they were caught.
+      return jsonResponse({ ok: true });
+    }
+
+    // --- Validation ---
     if (!name || !message || (!phone && !email)) {
       return jsonResponse(
         { ok: false, error: "Please provide your name, a message, and a phone or email." },
         400
       );
+    }
+
+    if (email && !EMAIL_RE.test(email)) {
+      return jsonResponse({ ok: false, error: "Please enter a valid email address." }, 400);
+    }
+
+    if (phone && !PHONE_RE.test(phone)) {
+      return jsonResponse({ ok: false, error: "Please enter a valid phone number." }, 400);
     }
 
     // Optional: read the photo into a base64 string for email/MMS use.
@@ -174,7 +197,11 @@ function jsonResponse(data: unknown, status = 200): Response {
 
 function arrayBufferToBase64(buf: ArrayBuffer): string {
   const bytes = new Uint8Array(buf);
+  // Process in chunks to avoid O(n²) string concatenation for large files.
+  const CHUNK = 8192;
   let binary = "";
-  for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+  for (let i = 0; i < bytes.byteLength; i += CHUNK) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + CHUNK));
+  }
   return btoa(binary);
 }

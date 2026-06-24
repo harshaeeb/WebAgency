@@ -1,0 +1,69 @@
+---
+// src/pages/service-areas/[area].astro
+//
+// Generates one dedicated page per service area when a client serves
+// multiple towns with meaningfully different content. This pattern mirrors
+// services/[slug].astro and is the recommended approach for multi-town
+// clients who want to rank for city-specific searches.
+//
+// HOW TO ACTIVATE FOR A CLIENT:
+// 1. Add a `serviceAreaPages` array to site.ts (see the commented-out
+//    example in SiteConfig) with an entry per town.
+// 2. Remove the `export const prerender = false` line and the early-return
+//    guard below — the page will then build static pages automatically.
+// 3. Fill each entry with town-specific copy rather than generic copy.
+//    Duplicate content across area pages is a ranking anti-pattern.
+//
+// LEFT DISABLED BY DEFAULT because not every client needs it, and a
+// half-filled generic page is worse for SEO than no page at all.
+
+import Base from "../../layouts/Base.astro";
+import ClickToCall from "../../components/ClickToCall.astro";
+import ContactForm from "../../components/ContactForm.astro";
+import { site } from "../../config/site";
+
+// Guard: prevents this page from building until service area pages are
+// configured. Remove once serviceAreaPages is wired up in site.ts.
+export function getStaticPaths() {
+  // Return an empty array so Astro doesn't error on the file existing.
+  // Replace this with the real implementation when activating for a client:
+  //
+  //   return site.serviceAreaPages.map((area) => ({
+  //     params: { area: area.slug },
+  //     props: { area },
+  //   }));
+  return [];
+}
+
+// Placeholder props — replaced by real data from getStaticPaths above.
+const area = {
+  slug: "",
+  name: "",
+  headline: "",   // e.g. "Plumbing Services in Plano, TX"
+  body: "",       // 1-2 paragraphs of town-specific content
+};
+
+const title = `${area.name} | ${site.business}`;
+const description = area.headline;
+---
+
+<Base title={title} description={description}>
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 py-16">
+    <p class="text-sm font-medium text-[var(--brand)]">{site.business}</p>
+    <h1 class="mt-2 text-3xl sm:text-4xl font-bold text-slate-900">{area.headline}</h1>
+    <div class="mt-4 text-lg text-slate-600 space-y-4">
+      <p>{area.body}</p>
+    </div>
+
+    <div class="mt-8">
+      <ClickToCall label={`Call about service in ${area.name}`} />
+    </div>
+  </section>
+
+  <section class="bg-slate-50 border-t border-slate-200">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 py-16">
+      <h2 class="text-2xl font-bold text-slate-900 mb-6">Request a Quote in {area.name}</h2>
+      <ContactForm />
+    </div>
+  </section>
+</Base>

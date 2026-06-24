@@ -4,16 +4,22 @@
 // Every page wraps in this layout. LocalBusiness schema markup lives here,
 // populated entirely from site.ts, per the SEO checklist in CLAUDE.md.
 import "../styles/global.css";
-import { site } from "../config/site";
+import { site, validateConfig } from "../config/site";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+
+// Fail loudly at build/dev time if the config is incomplete or still
+// contains placeholder values — catches misconfigurations before they reach prod.
+validateConfig(site);
 
 interface Props {
   title: string;          // full page title, already formatted per the SEO checklist
   description: string;    // meta description, 1-2 plain sentences
+  ogImage?: string;       // optional absolute URL for og:image social preview
 }
 
-const { title, description } = Astro.props;
+const { title, description, ogImage } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, site.url).href;
 
 const schema = {
   "@context": "https://schema.org",
@@ -49,6 +55,14 @@ const schema = {
 
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Open Graph / social sharing -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
 
     <!-- NAP consistency: same business name/phone/address format everywhere -->
     <meta name="author" content={site.business} />
