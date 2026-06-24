@@ -1,0 +1,71 @@
+---
+// src/layouts/Base.astro
+//
+// Every page wraps in this layout. LocalBusiness schema markup lives here,
+// populated entirely from site.ts, per the SEO checklist in CLAUDE.md.
+import "../styles/global.css";
+import { site } from "../config/site";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props {
+  title: string;          // full page title, already formatted per the SEO checklist
+  description: string;    // meta description, 1-2 plain sentences
+}
+
+const { title, description } = Astro.props;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  name: site.business,
+  telephone: site.phone,
+  email: site.email,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: site.address.split(",")[0]?.trim(),
+    addressLocality: site.city,
+    addressRegion: site.state,
+    postalCode: site.zip,
+    addressCountry: "US",
+  },
+  areaServed: site.serviceAreas,
+  aggregateRating: site.googleReviewCount
+    ? {
+        "@type": "AggregateRating",
+        ratingValue: site.googleRating,
+        reviewCount: site.googleReviewCount,
+      }
+    : undefined,
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <!-- NAP consistency: same business name/phone/address format everywhere -->
+    <meta name="author" content={site.business} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} is:inline />
+
+    <style define:vars={{ brandColor: site.brandColor }}>
+      :root {
+        --brand: var(--brandColor);
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex flex-col font-sans text-slate-800 antialiased">
+    <Header />
+    <main class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

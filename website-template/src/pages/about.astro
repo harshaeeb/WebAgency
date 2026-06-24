@@ -1,0 +1,41 @@
+---
+// src/pages/about.astro
+import Base from "../layouts/Base.astro";
+import ClickToCall from "../components/ClickToCall.astro";
+import { site } from "../config/site";
+
+const title = `About ${site.business} | ${site.city}, ${site.state}`;
+const description = `${site.business} has served ${site.serviceAreas.join(", ")} for ${site.yearsInBusiness}+ years. Learn about our team and our approach.`;
+---
+
+<Base title={title} description={description}>
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 py-16">
+    <h1 class="text-3xl sm:text-4xl font-bold text-slate-900">About {site.business}</h1>
+
+    <div class="mt-6 space-y-4 text-slate-700 leading-relaxed">
+      <!--
+        Replace this placeholder copy with the client's real story —
+        how the business started, what they're known for locally, and
+        what makes them trustworthy. Keep it specific and human; avoid
+        generic "we pride ourselves on quality" filler.
+      -->
+      <p>
+        For {site.yearsInBusiness}+ years, {site.business} has provided honest,
+        reliable plumbing service to homeowners and businesses across{" "}
+        {site.serviceAreas.join(", ")}. [Replace with the owner's real story —
+        how the business started, what they specialize in, and what local
+        customers can expect.]
+      </p>
+      <p>
+        We believe in straight answers and fair pricing — no surprise fees,
+        no upselling work you don't need. That approach has earned us{" "}
+        {site.googleReviewCount}+ five-star reviews from neighbors right here
+        in {site.city} and the surrounding area.
+      </p>
+    </div>
+
+    <div class="mt-10">
+      <ClickToCall />
+    </div>
+  </section>
+</Base>

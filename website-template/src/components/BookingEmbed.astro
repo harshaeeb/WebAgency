@@ -1,0 +1,63 @@
+---
+// src/components/BookingEmbed.astro
+//
+// Renders nothing at all if site.features.booking is false — booking is a
+// paid upsell, not a default. When true, embeds the client's Cal.com
+// scheduling page using Cal.com's official embed snippet. Cal.com handles
+// availability, Google Calendar sync, and confirmations entirely; no
+// custom calendar logic belongs in this codebase. See CLAUDE.md.
+import { site } from "../config/site";
+
+const { features, calLink } = site;
+---
+
+{features.booking && calLink && (
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 py-16">
+    <div class="text-center mb-8">
+      <h2 class="text-2xl sm:text-3xl font-bold text-slate-900">Book an Appointment</h2>
+      <p class="mt-2 text-slate-600">Pick a service and a time that works for you — confirmed instantly.</p>
+    </div>
+
+    <!-- Cal.com inline embed container -->
+    <div id="cal-booking-embed" class="rounded-xl border border-slate-200 overflow-hidden min-h-[600px]"></div>
+
+    <script type="module" define:vars={{ calLink }} is:inline>
+      // Official Cal.com embed snippet (cal.com/docs/embed). The function
+      // creates a global `Cal` if it doesn't exist yet, then renders the
+      // inline embed pointed at this client's calLink (set in site.ts).
+      (function (C, A, L) {
+        let p = function (a, ar) { a.q.push(ar); };
+        let d = C.document;
+        C.Cal = C.Cal || function () {
+          let cal = C.Cal; let ar = arguments;
+          if (!cal.loaded) {
+            cal.ns = {}; cal.q = cal.q || [];
+            d.head.appendChild(d.createElement("script")).src = A;
+            cal.loaded = true;
+          }
+          if (ar[0] === L) {
+            const api = function () { p(api, arguments); };
+            const namespace = ar[1];
+            api.q = api.q || [];
+            if (typeof namespace === "string") {
+              cal.ns[namespace] = cal.ns[namespace] || api;
+              p(cal.ns[namespace], ar);
+              p(cal, ["initNamespace", namespace]);
+            } else p(cal, ar);
+            return;
+          }
+          p(cal, ar);
+        };
+      })(window, "https://app.cal.com/embed/embed.js", "init");
+
+      // @ts-expect-error - Cal is attached to window by the snippet above
+      Cal("init", { origin: "https://cal.com" });
+      // @ts-expect-error
+      Cal("inline", {
+        elementOrSelector: "#cal-booking-embed",
+        calLink: calLink,
+        layout: "month_view",
+      });
+    </script>
+  </section>
+)}

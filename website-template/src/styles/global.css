@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+/*
+  --brand is set dynamically in Base.astro from site.brandColor (src/config/site.ts).
+  Components reference it via Tailwind's arbitrary value syntax, e.g.
+  class="bg-[var(--brand)]" — this keeps brand color a one-file change
+  (site.ts) rather than something that needs editing in Tailwind config
+  per client.
+*/
+:root {
+  --brand: #1F6FEB;
+}
+
+html {
+  scroll-behavior: smooth;
+}

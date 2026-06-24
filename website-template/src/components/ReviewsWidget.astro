@@ -1,0 +1,52 @@
+---
+// src/components/ReviewsWidget.astro
+//
+// Two modes controlled by site.features.reviewsWidget:
+// - false (default): a styled button linking out to the business's Google
+//   review page. Zero cost, zero maintenance.
+// - true (upsell): a live embedded widget showing star ratings and recent
+//   reviews inline. Wire your chosen reviews-widget provider's embed
+//   snippet into the block below — left as a placeholder since the
+//   specific provider is a business decision made per Section 3.2 of the
+//   Website Development & Hosting Strategy doc.
+import { site } from "../config/site";
+---
+
+<section class="bg-slate-50 border-y border-slate-200">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-16 text-center">
+    <div class="flex items-center justify-center gap-1 text-[var(--brand)] mb-3">
+      {Array.from({ length: 5 }).map(() => (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-6 h-6">
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 0 0 .95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 0 0-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 0 0-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 0 0-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 0 0 .951-.69l1.519-4.674Z" />
+        </svg>
+      ))}
+    </div>
+    <p class="text-2xl font-bold text-slate-900">
+      {site.googleRating} out of 5
+    </p>
+    <p class="mt-1 text-slate-600">
+      Based on {site.googleReviewCount}+ Google reviews
+    </p>
+
+    {site.features.reviewsWidget ? (
+      // UPSELL — live embedded widget.
+      // Replace this block with the actual embed snippet/script from your
+      // chosen reviews-widget provider once a client has purchased this
+      // upsell. Until that provider is finalized, this placeholder keeps
+      // the toggle functional without breaking the build.
+      <div class="mt-8 rounded-xl border border-slate-200 bg-white p-8 text-sm text-slate-400">
+        [ Embedded live reviews widget renders here — provider snippet not yet wired in ]
+      </div>
+    ) : (
+      // DEFAULT — free link to the business's Google review page
+      <a
+        href={site.googleReviewLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="mt-6 inline-flex items-center justify-center rounded-lg border border-slate-300 text-slate-700 px-6 py-3 text-base font-semibold hover:bg-white transition-colors"
+      >
+        Read Our Reviews on Google
+      </a>
+    )}
+  </div>
+</section>

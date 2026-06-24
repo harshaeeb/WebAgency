@@ -1,0 +1,42 @@
+---
+// src/components/ServicesGrid.astro
+import { site } from "../config/site";
+
+interface Props {
+  compact?: boolean; // when true, used as a homepage teaser rather than the full services page
+}
+const { compact = false } = Astro.props;
+---
+
+<section class="max-w-6xl mx-auto px-4 sm:px-6 py-16">
+  <div class="text-center mb-10">
+    <h2 class="text-2xl sm:text-3xl font-bold text-slate-900">What We Do</h2>
+    <p class="mt-2 text-slate-600">Serving {site.serviceAreas.join(", ")}</p>
+  </div>
+
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {site.services.map((service) => (
+      <a
+        href={`/services/${service.slug}`}
+        class="block rounded-xl border border-slate-200 p-6 hover:border-[var(--brand)] hover:shadow-md transition-all"
+      >
+        <h3 class="text-lg font-semibold text-slate-900">{service.name}</h3>
+        <p class="mt-2 text-sm text-slate-600">{service.shortDescription}</p>
+        <span class="mt-4 inline-block text-sm font-medium text-[var(--brand)]">
+          Learn more &rarr;
+        </span>
+      </a>
+    ))}
+  </div>
+
+  {!compact && (
+    <div class="mt-10 text-center">
+      <a
+        href="/contact"
+        class="inline-flex items-center justify-center rounded-lg bg-[var(--brand)] text-white px-6 py-3 text-base font-semibold shadow-sm hover:opacity-90 transition-opacity"
+      >
+        Get a Free Quote
+      </a>
+    </div>
+  )}
+</section>
