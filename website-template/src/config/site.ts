@@ -52,7 +52,7 @@ export const site: SiteConfig = {
   tagline: "Fast, honest plumbing for Frisco and the North Dallas area",
   url: "https://smithplumbing.com",
   phone: "+19453960311",
-  phoneDisplay: "(945) ",
+  phoneDisplay: "(945) 396 0311",
   email: "harsha.eeb@gmail.com",
   emailDomain: "smithplumbing.com",
   address: "123 Main St, Frisco, TX 75034",
