@@ -72,7 +72,10 @@ When given a new client's details, do the following in order:
 4. Each entry in `services` automatically gets its own page at `/services/[slug]` via `getStaticPaths` in `src/pages/services/[slug].astro` — you do not need to create pages manually. If the client serves multiple distinct towns with meaningfully different content, activate `src/pages/service-areas/[area].astro` (see instructions inside that file) rather than building from scratch.
 5. Replace the placeholder copy in `about.astro` (marked with a `[Replace with...]` bracket) with the client's real story.
 6. Place client-provided images in `public/images/` and reference them from `Hero.astro` and elsewhere — do not use stock photos unless explicitly provided. `Hero.astro` currently has a plain placeholder box for this reason.
-7. Set the `RESEND_API_KEY` (and `TWILIO_*` if SMS is active) as environment variables in the Cloudflare Pages project settings — never commit these to the repo.
+7. Set environment variables in Cloudflare Pages project settings — never commit these to the repo:
+   - `RESEND_API_KEY` (required): your Resend API key.
+   - `RESEND_FROM_EMAIL` (optional): the verified sending address, e.g. `inquiries@smithplumbing.com`. Omit until the client's domain is verified in Resend — the function falls back to `onboarding@resend.dev`, which delivers to your Resend account's registered email and works without domain verification.
+   - `TWILIO_*` vars only if `smsForwarding` is active.
 8. Run the SEO checklist (below) on every page before considering the build done.
 9. Preview locally with `npm run dev`, and run `npx astro check` to confirm no type errors before pushing.
 10. Push to the client's git repository — Cloudflare Pages builds and deploys automatically on push.

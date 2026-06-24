@@ -116,8 +116,16 @@ async function sendEmailViaResend(
     ? [{ filename: data.photoFilename ?? "photo.jpg", content: data.photoBase64 }]
     : undefined;
 
+  // Use RESEND_FROM_EMAIL env var when the client's domain is verified in Resend.
+  // Falls back to Resend's shared onboarding address, which requires no domain
+  // verification but only delivers to the Resend account's registered email —
+  // fine for testing and early installs before the domain is set up.
+  const fromAddress = env.RESEND_FROM_EMAIL
+    ? `${site.business} Website <${env.RESEND_FROM_EMAIL}>`
+    : `${site.business} Website <onboarding@resend.dev>`;
+
   const body: Record<string, unknown> = {
-    from: `${site.business} Website <inquiries@${site.emailDomain ?? "yourdomain.com"}>`,
+    from: fromAddress,
     to: [site.email],
     subject: `New inquiry from ${data.name} \u2014 ${site.business}`,
     text: [
