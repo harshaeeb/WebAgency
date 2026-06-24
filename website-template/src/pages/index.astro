@@ -2,17 +2,19 @@
 // src/pages/index.astro
 import Base from "../layouts/Base.astro";
 import Hero from "../components/Hero.astro";
+import TrustBar from "../components/TrustBar.astro";
 import ServicesGrid from "../components/ServicesGrid.astro";
 import ReviewsWidget from "../components/ReviewsWidget.astro";
 import BookingEmbed from "../components/BookingEmbed.astro";
 import { site } from "../config/site";
 
-const title = `${site.business} | Plumbing Services in ${site.city}, ${site.state}`;
+const title = `${site.business} | ${site.services[0]?.name ?? "Local Services"} in ${site.city}, ${site.state}`;
 const description = `${site.business} provides ${site.services.map(s => s.name.toLowerCase()).join(", ")} for ${site.serviceAreas.join(", ")}. ${site.yearsInBusiness}+ years in business, ${site.googleRating}-star rated.`;
 ---
 
 <Base title={title} description={description}>
   <Hero />
+  <TrustBar />
   <ServicesGrid compact />
   <ReviewsWidget />
   <BookingEmbed />

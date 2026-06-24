@@ -14,3 +14,65 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* ── Scroll-reveal animations ─────────────────────────────────────────────── */
+/* Elements with [data-reveal] start invisible and slide up into view.
+   The IntersectionObserver in Base.astro adds .is-visible to trigger them. */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* Staggered children: each sibling delays slightly more */
+[data-reveal-stagger] > * {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+[data-reveal-stagger].is-visible > *:nth-child(1) { opacity:1; transform:translateY(0); transition-delay: 0.05s; }
+[data-reveal-stagger].is-visible > *:nth-child(2) { opacity:1; transform:translateY(0); transition-delay: 0.15s; }
+[data-reveal-stagger].is-visible > *:nth-child(3) { opacity:1; transform:translateY(0); transition-delay: 0.25s; }
+[data-reveal-stagger].is-visible > *:nth-child(4) { opacity:1; transform:translateY(0); transition-delay: 0.35s; }
+[data-reveal-stagger].is-visible > *:nth-child(5) { opacity:1; transform:translateY(0); transition-delay: 0.45s; }
+[data-reveal-stagger].is-visible > *:nth-child(6) { opacity:1; transform:translateY(0); transition-delay: 0.55s; }
+
+/* ── Hero text slide-up ───────────────────────────────────────────────────── */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-animate > * {
+  opacity: 0;
+  animation: slideUp 0.6s ease forwards;
+}
+.hero-animate > *:nth-child(1) { animation-delay: 0.05s; }
+.hero-animate > *:nth-child(2) { animation-delay: 0.18s; }
+.hero-animate > *:nth-child(3) { animation-delay: 0.30s; }
+.hero-animate > *:nth-child(4) { animation-delay: 0.42s; }
+
+/* ── CTA pulse ────────────────────────────────────────────────────────────── */
+@keyframes ctaPulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--brand) 40%, transparent); }
+  50%       { box-shadow: 0 0 0 8px color-mix(in srgb, var(--brand) 0%, transparent); }
+}
+.cta-pulse {
+  animation: ctaPulse 2.4s ease-in-out infinite;
+}
+
+/* ── Service card lift ────────────────────────────────────────────────────── */
+.service-card {
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+.service-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px -6px rgb(0 0 0 / 0.12);
+}
+
+/* ── Count-up number ──────────────────────────────────────────────────────── */
+[data-countup] {
+  font-variant-numeric: tabular-nums;
+}
