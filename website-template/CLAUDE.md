@@ -22,13 +22,12 @@ starting a build — do not edit any other file to do so.
 website-template/
 ├── CLAUDE.md
 ├── astro.config.mjs            ← set `site:` to the client's real domain before launch
-├── scripts/
-│   └── generate-images.ts      ← build-time AI image generation (see "Image generation" below)
 ├── src/
 │   ├── config/
 │   │   └── site.ts             ← the only file that changes per client
 │   ├── utils/
-│   │   └── palette.ts          ← derives the full brand color scale from site.brandColor
+│   │   ├── palette.ts          ← derives the full brand color scale from site.brandColor
+│   │   └── resolveImage.ts     ← confirms an image path in site.ts actually exists on disk
 │   ├── components/
 │   │   ├── Header.astro        (persistent click-to-call CTA)
 │   │   ├── Hero.astro          (gradient brand wash + hero image, falls back to placeholder)
@@ -52,9 +51,12 @@ website-template/
 │   └── api/
 │       └── inquiry.ts          ← form handling + email (every client) + SMS (if upsell active)
 └── public/
-    └── images/
-        └── generated/          ← output of scripts/generate-images.ts, empty by default
+    └── images/                 ← manually uploaded client photos go here directly, empty by default
 ```
+
+There is no build step or script involved in images — every image is a
+file manually placed under `public/images/`, referenced by its path in
+`site.ts`. See "Image uploads" below.
 
 ## Per-client build steps
 
@@ -70,13 +72,15 @@ When given a new client's details, do the following in order:
    value at build time. No other file needs to change to re-theme the site.
    See "Brand color & palette system" below before touching any component
    styling directly.
-3. Fill in each `imagePrompt` field (`images.heroPrompt`, `images.aboutPrompt`,
-   and each service's `imagePrompt`) with a description specific to this
-   client's trade and brand. Then run `npm run generate-images` once a
-   provider is wired into `scripts/generate-images.ts` (see "Image
-   generation" below) to produce the actual image files. Until a provider
-   is wired in, leave `public/images/generated/` empty — components fall
-   back to a labeled placeholder box automatically.
+3. Gather client photos (their own, or licensed stock if they have none)
+   and drop them into `public/images/` — there is no AI generation step
+   and no `generated/` subfolder distinction; every image is a manually
+   placed file. Set the matching path in `site.ts` (`images.hero`,
+   `images.about`, each service's `image`), e.g. `"/images/hero.jpg"`.
+   Leave a field unset if no photo is available yet — every component
+   automatically falls back to a labeled placeholder box, checked against
+   the actual filesystem at build time (see "Image uploads" below), so an
+   unset or wrong path never produces a broken image icon.
 4. Set each flag in `features` based on what the client purchased:
    - `reviewsWidget: true` → also confirm the reviews widget embed snippet/ID is available, and wire it into the placeholder block in `ReviewsWidget.astro`.
    - `booking: true` → fill in `calLink` once the client's Cal.com account is set up.
@@ -136,44 +140,58 @@ stays a one-config-value change.
 `site.ts`. Every page re-themes automatically on the next build — no
 component needs to change.
 
-## Image generation
+## Image uploads
 
-`site.ts` has an `images` block (`hero`, `about`) and a per-service `image`
-field, each paired with a `*Prompt` field describing what that image
-should depict. `scripts/generate-images.ts` reads every `*Prompt` field,
-calls an image-generation provider, and saves the result to
-`public/images/generated/` under the filename referenced in `site.ts`.
+There is no AI image generation anywhere in this template or its build
+pipeline — every image is a real file, manually uploaded to
+`public/images/`, sourced either from the client directly or from
+licensed stock. This was a deliberate decision; an earlier version of this
+template included a build-time AI generation script, which was removed in
+favor of manual uploads only.
 
-**This is a build-time, per-client step — not part of `npm run build`.**
-Images are generated once during setup and committed/left as static
-files, so there's zero runtime cost and zero added build time on every
-deploy. Run it with:
+`site.ts` has an `images` block (`hero`, `about`) and a per-service
+`image` field. Each is a plain string path, e.g. `"/images/hero.jpg"`,
+pointing at a file under `public/images/`. To add a photo: drop the file
+into `public/images/`, then set the matching field in `site.ts` to its
+path. To remove one (or before a photo is ready), leave the field unset.
 
-```
-npm run generate-images
-```
+**Every component checks the filesystem at build time, not just whether
+the config value is set.** `src/utils/resolveImage.ts` calls
+`existsSync()` against the actual file before any component trusts an
+image path — this matters because a path can be set in `site.ts` before
+the corresponding file has actually been uploaded (a very normal
+in-progress state), and without this check that would render a broken
+image icon instead of the intended placeholder. `Hero.astro`,
+`ServicesGrid.astro`, `about.astro`, and `services/[slug].astro` all call
+`resolveImage()` rather than checking `site.images.hero` (etc.) directly —
+**do not bypass this utility** by reading an image path straight from
+`site.ts` in a new component; always route it through `resolveImage()`
+first, or a missing file will silently break instead of falling back.
 
-**No provider is wired in by default.** `generateImage()` in
-`scripts/generate-images.ts` currently throws a clear error explaining
-what's missing — this is intentional, not a bug. Implement that one
-function against whichever provider gets chosen (OpenAI, Stability, Flux,
-Ideogram, etc.); everything else in the script (reading prompts from
-`site.ts`, file naming, skip-if-already-exists, the summary output) is
-already provider-agnostic and shouldn't need to change.
+One real bug this caught during development: a naive implementation
+resolved `public/` relative to the utility module's own file location
+(`import.meta.dirname`) — but Astro/Vite bundle that module into a
+transient build chunk directory at actual build time, so the relative
+path pointed at the wrong place entirely and every image silently failed
+to resolve, even when the file genuinely existed. The fix was anchoring
+to `process.cwd()` instead, which Astro always sets to the project root
+during a build. If you ever touch `resolveImage.ts`, re-verify this with
+an actual `npm run build` (not just `astro check`) before trusting it —
+the bug was invisible to the type checker and only showed up by checking
+the real rendered output.
 
-**Components already handle the "no image yet" case gracefully** —
-`Hero.astro`, `ServicesGrid.astro`, `about.astro`, and
-`services/[slug].astro` all check whether the relevant image path
-resolves to a real file reference and fall back to a labeled placeholder
-box (using the brand palette, not stock photography) if not. This means
-you can build and preview a client's full site, including layout and
-copy, before any images exist.
+**Components handle the "no image yet" case gracefully** — every
+placeholder is a labeled, brand-tinted box, not a generic broken-image
+icon and not stock photography. This means you can build and preview a
+client's full site, including layout and copy, before any real photos
+exist.
 
-**Don't commit synthetic/placeholder test images** to `public/images/generated/`
-— if no real image exists yet, leave the directory empty (a `.gitkeep`
-preserves it in git) so the intentional placeholder boxes render instead.
-A fake-but-plausible-looking image is worse than an obvious placeholder,
-per the "don't use stock photography in placeholders" rule below.
+**Don't commit synthetic/placeholder test images** to `public/images/` —
+if no real photo exists yet, leave the relevant `site.ts` field unset
+(a `.gitkeep` preserves the empty directory in git) so the intentional
+placeholder boxes render instead. A fake-but-plausible-looking image is
+worse than an obvious placeholder, per the "don't use stock photography
+in placeholders" rule below.
 
 ## On-page SEO checklist (apply to every page, every build)
 
@@ -243,6 +261,14 @@ per the "don't use stock photography in placeholders" rule below.
   color should appear — always reference the generated `--brand-*` CSS
   variables (see "Brand color & palette system" above) so the palette
   stays a one-config-value change.
-- Don't commit synthetic or placeholder test images to
-  `public/images/generated/` — leave it empty until real generated images
-  exist; the components' built-in fallback handles the empty case.
+- Don't commit synthetic or placeholder test images to `public/images/`
+  — leave the directory empty (or omit the relevant `site.ts` field) until
+  a real client photo exists; the components' built-in fallback handles
+  the empty case.
+- Don't read an image path straight from `site.ts` in a new component —
+  always pass it through `resolveImage()` (`src/utils/resolveImage.ts`)
+  first, so a path that's set but not yet uploaded falls back to the
+  placeholder instead of a broken image icon.
+- Don't add any AI image generation back into this template without a
+  deliberate decision to do so — manual upload is the current, intentional
+  convention, not a placeholder for a future automated pipeline.

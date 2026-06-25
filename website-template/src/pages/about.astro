@@ -3,9 +3,11 @@
 import Base from "../layouts/Base.astro";
 import ClickToCall from "../components/ClickToCall.astro";
 import { site } from "../config/site";
+import { resolveImage } from "../utils/resolveImage";
 
 const title = `About ${site.business} | ${site.city}, ${site.state}`;
 const description = `${site.business} has served ${site.serviceAreas.join(", ")} for ${site.yearsInBusiness}+ years. Learn about our team and our approach.`;
+const aboutImage = resolveImage(site.images?.about);
 ---
 
 <Base title={title} description={description}>
@@ -43,10 +45,10 @@ const description = `${site.business} has served ${site.serviceAreas.join(", ")}
       </div>
     </div>
 
-    {site.images?.about ? (
+    {aboutImage ? (
       <div class="aspect-[4/3] rounded-2xl overflow-hidden shadow-lg shadow-[var(--brand-100)] ring-1 ring-slate-900/5">
         <img
-          src={site.images.about}
+          src={aboutImage}
           alt={`${site.business} team`}
           class="w-full h-full object-cover"
           width="640"

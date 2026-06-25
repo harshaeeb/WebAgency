@@ -10,8 +10,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro",
-    "generate-images": "tsx scripts/generate-images.ts"
+    "astro": "astro"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
@@ -24,7 +23,6 @@
     "@astrojs/check": "^0.9.9",
     "@cloudflare/workers-types": "^4.20260624.1",
     "@types/culori": "^4.0.1",
-    "tsx": "^4.22.4",
     "typescript": "^6.0.3"
   }
 }

@@ -4,11 +4,15 @@
 // Uses the generated brand palette (--brand-50 through --brand-900) for a
 // layered gradient background and accent decoration — clean/corporate
 // direction: subtle, not loud. Falls back to a plain placeholder box if
-// site.images.hero hasn't been generated yet (see scripts/generate-images.ts
-// and the imagePrompt fields in site.ts).
+// site.images.hero hasn't been set, OR if it's set but the file hasn't
+// actually been uploaded to public/ yet (see resolveImage in
+// src/utils/resolveImage.ts) — see CLAUDE.md for the image upload
+// convention (manually uploaded files under public/images/, no
+// generation step involved).
 import { site } from "../config/site";
+import { resolveImage } from "../utils/resolveImage";
 
-const heroImage = site.images?.hero;
+const heroImage = resolveImage(site.images?.hero);
 ---
 
 <section class="relative overflow-hidden bg-gradient-to-b from-[var(--brand-50)] via-white to-white border-b border-slate-200">
@@ -60,8 +64,8 @@ const heroImage = site.images?.hero;
         </div>
       ) : (
         // Fallback placeholder — shown only if no hero image has been
-        // generated/provided yet. Kept intentionally plain rather than a
-        // stock photo per CLAUDE.md.
+        // uploaded yet. Kept intentionally plain rather than a stock
+        // photo per CLAUDE.md.
         <div class="aspect-[4/3] rounded-2xl bg-[var(--brand-50)] border border-[var(--brand-100)] flex items-center justify-center text-[var(--brand-400)] text-sm">
           [ Hero image goes here — see site.images.hero ]
         </div>

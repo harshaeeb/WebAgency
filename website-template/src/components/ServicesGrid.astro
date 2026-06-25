@@ -1,6 +1,7 @@
 ---
 // src/components/ServicesGrid.astro
 import { site } from "../config/site";
+import { resolveImage } from "../utils/resolveImage";
 
 interface Props {
   compact?: boolean;     // when true, used as a homepage teaser rather than the full services page
@@ -19,15 +20,17 @@ const { compact = false, hideHeading = false } = Astro.props;
   )}
 
   <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    {site.services.map((service) => (
+    {site.services.map((service) => {
+      const serviceImage = resolveImage(service.image);
+      return (
       <a
         href={`/services/${service.slug}`}
         class="group block rounded-xl overflow-hidden border border-slate-200 bg-white hover:border-[var(--brand-300)] hover:shadow-lg hover:shadow-[var(--brand-100)] transition-all"
       >
-        {service.image ? (
+        {serviceImage ? (
           <div class="aspect-[16/10] overflow-hidden bg-[var(--brand-50)]">
             <img
-              src={service.image}
+              src={serviceImage}
               alt={service.name}
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               loading="lazy"
@@ -48,7 +51,8 @@ const { compact = false, hideHeading = false } = Astro.props;
           </span>
         </div>
       </a>
-    ))}
+      );
+    })}
   </div>
 
   {!compact && (

@@ -38,12 +38,15 @@ scaffold:
   page, driving gradients, tinted section backgrounds, and card depth
   throughout — not just a single flat accent color.
 - Hero, About, and each service have an image slot (`site.images.hero`,
-  `site.images.about`, `service.image`) paired with a `*Prompt` field for
-  build-time AI image generation (`scripts/generate-images.ts`, run via
-  `npm run generate-images`). No image provider is wired in yet — see
-  "Known gaps" below — but every component gracefully falls back to a
-  labeled, on-brand placeholder box when no image exists, so the site is
-  fully previewable without any images generated.
+  `site.images.about`, `service.image`) — plain string paths pointing at
+  manually uploaded files under `public/images/`. There is no AI
+  generation step anywhere in this template; an earlier version had one,
+  and it was deliberately removed in favor of manual uploads only. Every
+  component resolves its image path through `src/utils/resolveImage.ts`,
+  which checks the actual filesystem at build time, so a path that's set
+  in `site.ts` before the file is uploaded falls back to a labeled,
+  on-brand placeholder box rather than a broken image icon — the site is
+  fully previewable with zero photos in place.
 - `npm run build` passes (7 pages built) and `npx astro check` passes with
   0 errors, 0 warnings, as of this commit — verified from a true clean
   `npm ci` checkout, not just the working directory.
@@ -57,14 +60,21 @@ scaffold:
 
 ## Known gaps — not bugs, just not built yet
 
-- **No AI image provider wired in.** `scripts/generate-images.ts` has the
-  full pipeline built (reads prompts from `site.ts`, file naming,
-  skip-if-exists, summary reporting) but `generateImage()` itself throws a
-  clear error until a real provider (OpenAI, Stability, Flux, Ideogram,
-  etc.) is implemented against it — left as an open decision rather than
-  guessed at. Every component already handles the "no image yet" case via
-  a labeled placeholder fallback, so this isn't blocking — the site is
-  fully previewable and demo-able without it.
+- **No automated way to source images.** Manual upload is the deliberate
+  convention (see `website-template/CLAUDE.md`, "Image uploads"), not a
+  placeholder for a future pipeline — don't reintroduce AI generation
+  without a deliberate decision to do so. Real client photos or licensed
+  stock images still need to be sourced and dropped into
+  `public/images/` by hand for every build.
+- **`resolveImage.ts` has a fixed but worth-knowing-about bug history.**
+  An earlier implementation resolved `public/` relative to its own
+  compiled module location (`import.meta.dirname`), which broke silently
+  because Astro/Vite bundle that file into a transient build chunk
+  directory at actual build time — every image failed to resolve even
+  when the file genuinely existed, and the type checker caught nothing.
+  Fixed by anchoring to `process.cwd()` instead. If this file is ever
+  touched again, re-verify with a real `npm run build`, not just
+  `astro check` — the bug was only visible in the actual rendered output.
 - **MMS photo attachments in `functions/api/inquiry.ts`**: Twilio's
   `MediaUrl` parameter needs a public URL; the form currently reads the
   photo as base64, which can't be passed directly. The fix is uploading
