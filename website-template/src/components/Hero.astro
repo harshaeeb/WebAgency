@@ -1,12 +1,26 @@
 ---
 // src/components/Hero.astro
+//
+// Uses the generated brand palette (--brand-50 through --brand-900) for a
+// layered gradient background and accent decoration — clean/corporate
+// direction: subtle, not loud. Falls back to a plain placeholder box if
+// site.images.hero hasn't been generated yet (see scripts/generate-images.ts
+// and the imagePrompt fields in site.ts).
 import { site } from "../config/site";
+
+const heroImage = site.images?.hero;
 ---
 
-<section class="bg-slate-50 border-b border-slate-200">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24 grid md:grid-cols-2 gap-10 items-center">
+<section class="relative overflow-hidden bg-gradient-to-b from-[var(--brand-50)] via-white to-white border-b border-slate-200">
+  <!-- Decorative blurred accent shape — subtle depth, not a loud effect -->
+  <div
+    class="pointer-events-none absolute -top-24 -right-24 w-96 h-96 rounded-full bg-[var(--brand-200)] opacity-40 blur-3xl"
+    aria-hidden="true"
+  ></div>
+
+  <div class="relative max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24 grid md:grid-cols-2 gap-10 items-center">
     <div>
-      <p class="inline-flex items-center gap-2 text-sm font-medium text-[var(--brand)] bg-[var(--brand)]/10 rounded-full px-3 py-1 mb-4">
+      <p class="inline-flex items-center gap-2 text-sm font-medium text-[var(--brand-700)] bg-[var(--brand-100)] rounded-full px-3 py-1 mb-4">
         Serving {site.serviceAreas.slice(0, 3).join(", ")} & nearby
       </p>
       <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 leading-tight">
@@ -20,13 +34,13 @@ import { site } from "../config/site";
       <div class="mt-8 flex flex-wrap gap-3">
         <a
           href={`tel:${site.phone}`}
-          class="inline-flex items-center justify-center rounded-lg bg-[var(--brand)] text-white px-6 py-3 text-base font-semibold shadow-sm hover:opacity-90 transition-opacity"
+          class="inline-flex items-center justify-center rounded-lg bg-[var(--brand)] text-white px-6 py-3 text-base font-semibold shadow-md shadow-[var(--brand-200)] hover:bg-[var(--brand-dark)] transition-colors"
         >
           Call {site.phoneDisplay}
         </a>
         <a
           href="/contact"
-          class="inline-flex items-center justify-center rounded-lg border border-slate-300 text-slate-700 px-6 py-3 text-base font-semibold hover:bg-slate-100 transition-colors"
+          class="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-700 px-6 py-3 text-base font-semibold hover:bg-slate-50 transition-colors"
         >
           Request a Quote
         </a>
@@ -34,14 +48,25 @@ import { site } from "../config/site";
     </div>
 
     <div class="relative">
-      <!--
-        Replace with a real client photo (public/images/...) before launch.
-        Placeholder kept intentionally plain rather than a stock photo —
-        per CLAUDE.md, don't use stock photos unless explicitly provided.
-      -->
-      <div class="aspect-[4/3] rounded-2xl bg-slate-200 flex items-center justify-center text-slate-400 text-sm">
-        [ Client photo goes here ]
-      </div>
+      {heroImage ? (
+        <div class="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl shadow-[var(--brand-100)] ring-1 ring-slate-900/5">
+          <img
+            src={heroImage}
+            alt={`${site.business} team and service vehicle`}
+            class="w-full h-full object-cover"
+            width="800"
+            height="600"
+          />
+        </div>
+      ) : (
+        // Fallback placeholder — shown only if no hero image has been
+        // generated/provided yet. Kept intentionally plain rather than a
+        // stock photo per CLAUDE.md.
+        <div class="aspect-[4/3] rounded-2xl bg-[var(--brand-50)] border border-[var(--brand-100)] flex items-center justify-center text-[var(--brand-400)] text-sm">
+          [ Hero image goes here — see site.images.hero ]
+        </div>
+      )}
     </div>
   </div>
 </section>
+

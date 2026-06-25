@@ -1,14 +1,16 @@
 @import "tailwindcss";
 
 /*
-  --brand is set dynamically in Base.astro from site.brandColor (src/config/site.ts).
-  Components reference it via Tailwind's arbitrary value syntax, e.g.
-  class="bg-[var(--brand)]" — this keeps brand color a one-file change
-  (site.ts) rather than something that needs editing in Tailwind config
-  per client.
+  The full brand palette (--brand-50 through --brand-950, plus semantic
+  aliases like --brand and --brand-surface) is generated at build time from
+  site.brandColor by src/utils/palette.ts and injected in Base.astro. The
+  fallback values below only apply before that injected <style> block loads
+  (effectively never, in practice) — they exist so the site doesn't break
+  if Base.astro is ever bypassed.
 */
 :root {
   --brand: #1F6FEB;
+  --brand-surface: #eff6ff;
 }
 
 html {

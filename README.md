@@ -16,11 +16,13 @@ WebAgency/
 └── website-template/                              ← the master Astro template, cloned per client
     ├── CLAUDE.md                                   ← build conventions for Claude Code
     ├── .env.example                                 ← required environment variables (Resend/Twilio)
+    ├── scripts/generate-images.ts                  ← build-time AI image generation (provider not yet wired in)
     ├── src/
     │   ├── config/site.ts                          ← per-client config (the only file that changes per client)
+    │   ├── utils/palette.ts                         ← derives the full brand color scale from one hex value
     │   ├── components/                              ← Header, Hero, ServicesGrid, ReviewsWidget,
     │   │                                               ContactForm, BookingEmbed, ClickToCall, Footer
-    │   ├── layouts/Base.astro                       ← LocalBusiness schema markup
+    │   ├── layouts/Base.astro                       ← LocalBusiness schema + generated brand CSS variables
     │   └── pages/                                   ← Home, About, Services (+ per-service via
     │                                                    getStaticPaths), Contact
     └── functions/api/inquiry.ts                    ← unified form + email (Resend) + SMS (Twilio, upsell) handler
@@ -36,16 +38,27 @@ a real site renders immediately. To start a new client build, follow the
 per-client steps in `CLAUDE.md` — in short, every change happens in
 `src/config/site.ts` and nowhere else.
 
-Verified before this commit: `npm run build` (all 7 pages, including 3
-dynamic service pages, build cleanly) and `npx astro check` (0 errors, 0
-warnings). Both upsell toggles (`reviewsWidget`, `booking`) were tested by
-temporarily enabling them and confirming the conditional components render
-correctly, then reverted to their default `false` state.
+The visual design is driven by a single brand color: `site.brandColor`
+expands into a full tonal palette at build time (`src/utils/palette.ts`,
+using OKLCH for perceptually correct shading), producing gradients, tinted
+section backgrounds, and layered card depth throughout — not just one flat
+accent color repeated everywhere. Hero, About, and each service also have
+an image slot wired up for build-time AI image generation
+(`npm run generate-images`); no provider is wired in yet, so every
+component falls back to a labeled placeholder box until one is.
 
-One known follow-up, flagged inline in `inquiry.ts`: MMS photo attachments
-via Twilio require the photo to be hosted at a public URL (e.g., Cloudflare
-R2) rather than sent as raw base64. This needs wiring up when the first
-SMS-upsell client with photo leads goes live — not yet implemented.
+Verified before this commit, from a true clean `npm ci` checkout: `npm run
+build` (all 7 pages, including 3 dynamic service pages, build cleanly) and
+`npx astro check` (0 errors, 0 warnings). Both upsell toggles
+(`reviewsWidget`, `booking`) were tested by temporarily enabling them and
+confirming the conditional components render correctly, then reverted to
+their default `false` state.
+
+Known follow-ups: (1) no image generation provider is wired in yet — see
+`scripts/generate-images.ts`; (2) MMS photo attachments via Twilio require
+the photo to be hosted at a public URL (e.g., Cloudflare R2) rather than
+sent as raw base64, flagged inline in `inquiry.ts`, needed when the first
+SMS-upsell client with photo leads goes live.
 
 ## Architecture summary
 
@@ -54,6 +67,10 @@ SMS-upsell client with photo leads goes live — not yet implemented.
 - **Hosting**: Cloudflare Pages free tier, including serverless Functions.
 - **Build model**: one master template repo, cloned and customized per
   client via `site.ts`.
+- **Visual design**: one brand hex value drives the entire palette via
+  build-time OKLCH derivation — see `src/utils/palette.ts`. Images are
+  generated once per client at build time (not on every deploy) via
+  `scripts/generate-images.ts`, keeping runtime cost at $0.
 - **Forms & email**: handled by a self-coded Cloudflare Pages Function
   calling Resend's API directly — no third-party form backend
   (Formspree/Web3Forms) is used. Every client site uses the same code path.
@@ -71,8 +88,9 @@ Full reasoning, cost tables, and the per-client build workflow are in
 ```bash
 cd website-template
 npm install
-npm run dev       # preview at http://localhost:4321
-npx astro check   # type-check before committing
-npm run build     # production build, outputs to dist/
+npm run dev              # preview at http://localhost:4321
+npx astro check           # type-check before committing
+npm run build              # production build, outputs to dist/
+npm run generate-images    # build-time image generation (once a provider is wired in)
 ```
 

@@ -5,6 +5,7 @@
 // populated entirely from site.ts, per the SEO checklist in CLAUDE.md.
 import "../styles/global.css";
 import { site } from "../config/site";
+import { generateBrandCssVars } from "../utils/palette";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 
@@ -14,6 +15,12 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
+
+// Derives the full brand-50 through brand-950 tonal scale (plus a couple of
+// semantic aliases) from site.brandColor at build time. See
+// src/utils/palette.ts for the color math; changing brandColor in site.ts
+// is the only thing needed to re-theme every page.
+const brandVars = generateBrandCssVars(site.brandColor);
 
 const schema = {
   "@context": "https://schema.org",
@@ -55,9 +62,24 @@ const schema = {
 
     <script type="application/ld+json" set:html={JSON.stringify(schema)} is:inline />
 
-    <style define:vars={{ brandColor: site.brandColor }}>
+    <style define:vars={brandVars}>
       :root {
-        --brand: var(--brandColor);
+        --brand-50: var(--brand50);
+        --brand-100: var(--brand100);
+        --brand-200: var(--brand200);
+        --brand-300: var(--brand300);
+        --brand-400: var(--brand400);
+        --brand-500: var(--brand500);
+        --brand-600: var(--brand600);
+        --brand-700: var(--brand700);
+        --brand-800: var(--brand800);
+        --brand-900: var(--brand900);
+        --brand-950: var(--brand950);
+        /* Semantic aliases used directly in components: */
+        --brand: var(--brand600);             /* primary action color (buttons, links) */
+        --brand-dark: var(--brand800);         /* hover/active states */
+        --brand-surface: var(--brand50);       /* tinted section backgrounds */
+        --brand-surface-strong: var(--brand100);
       }
     </style>
   </head>

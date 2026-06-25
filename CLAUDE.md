@@ -32,8 +32,21 @@ scaffold:
 - All pages and components are implemented and working: Home, About,
   Services (with one dedicated static page per service via
   `getStaticPaths`), Contact.
+- The visual design uses a build-time-generated brand palette: a single
+  `site.brandColor` hex value is expanded into a full 11-step OKLCH tonal
+  scale (`src/utils/palette.ts`) and injected as CSS variables in every
+  page, driving gradients, tinted section backgrounds, and card depth
+  throughout — not just a single flat accent color.
+- Hero, About, and each service have an image slot (`site.images.hero`,
+  `site.images.about`, `service.image`) paired with a `*Prompt` field for
+  build-time AI image generation (`scripts/generate-images.ts`, run via
+  `npm run generate-images`). No image provider is wired in yet — see
+  "Known gaps" below — but every component gracefully falls back to a
+  labeled, on-brand placeholder box when no image exists, so the site is
+  fully previewable without any images generated.
 - `npm run build` passes (7 pages built) and `npx astro check` passes with
-  0 errors, 0 warnings, as of this commit.
+  0 errors, 0 warnings, as of this commit — verified from a true clean
+  `npm ci` checkout, not just the working directory.
 - `src/config/site.ts` is filled in with a realistic demo business ("Smith
   Plumbing Co.") so the project runs and looks complete out of the box —
   replace every value in that one file to start a real client build.
@@ -44,6 +57,14 @@ scaffold:
 
 ## Known gaps — not bugs, just not built yet
 
+- **No AI image provider wired in.** `scripts/generate-images.ts` has the
+  full pipeline built (reads prompts from `site.ts`, file naming,
+  skip-if-exists, summary reporting) but `generateImage()` itself throws a
+  clear error until a real provider (OpenAI, Stability, Flux, Ideogram,
+  etc.) is implemented against it — left as an open decision rather than
+  guessed at. Every component already handles the "no image yet" case via
+  a labeled placeholder fallback, so this isn't blocking — the site is
+  fully previewable and demo-able without it.
 - **MMS photo attachments in `functions/api/inquiry.ts`**: Twilio's
   `MediaUrl` parameter needs a public URL; the form currently reads the
   photo as base64, which can't be passed directly. The fix is uploading
