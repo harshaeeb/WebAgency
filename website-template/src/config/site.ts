@@ -111,6 +111,7 @@ export const site: SiteConfig = {
   state: "TX",
   zip: "75034",
   serviceAreas: ["Frisco", "Plano", "McKinney", "Allen", "The Colony", "Prosper"],
+   businessStory: "
 
   services: [
     {
