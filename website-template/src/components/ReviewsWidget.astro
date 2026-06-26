@@ -1,44 +1,90 @@
 ---
 // src/components/ReviewsWidget.astro
 import { site } from "../config/site";
+
+const testimonials = site.testimonials ?? [];
 ---
 
-<section class="relative overflow-hidden bg-gradient-to-br from-[var(--brand-700)] to-[var(--brand-900)]">
-  <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--brand-500)/20%,transparent_70%)]" aria-hidden="true"></div>
+<section class="relative overflow-hidden bg-slate-900">
+  <!-- Subtle radial glow -->
+  <div
+    class="pointer-events-none absolute inset-0"
+    style="background: radial-gradient(ellipse 80% 60% at 50% 0%, color-mix(in srgb, var(--brand-700) 25%, transparent), transparent);"
+    aria-hidden="true"
+  ></div>
 
-  <div class="relative max-w-4xl mx-auto px-4 sm:px-6 py-16 text-center" data-reveal>
-    <div class="flex items-center justify-center gap-1 mb-4">
-      {Array.from({ length: 5 }).map(() => (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-7 h-7 text-amber-400">
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 0 0 .95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 0 0-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 0 0-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 0 0-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 0 0 .951-.69l1.519-4.674Z" />
-        </svg>
-      ))}
+  <div class="relative max-w-5xl mx-auto px-4 sm:px-6 py-20" data-reveal>
+    <!-- Header -->
+    <div class="text-center mb-4">
+      <div class="flex items-center justify-center gap-1 mb-5">
+        {Array.from({ length: 5 }).map(() => (
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-7 h-7 text-amber-400">
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 0 0 .95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 0 0-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 0 0-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 0 0-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 0 0 .951-.69l1.519-4.674Z" />
+          </svg>
+        ))}
+      </div>
+      <p class="text-5xl font-black text-white">{site.googleRating} <span class="text-3xl font-semibold text-slate-400">/ 5</span></p>
+      <p class="mt-2 text-slate-400">
+        Based on <strong class="text-white font-semibold">{site.googleReviewCount}+</strong> Google reviews
+      </p>
     </div>
 
-    <p class="text-4xl font-bold text-white">{site.googleRating} out of 5</p>
-    <p class="mt-2 text-[var(--brand-200)]">
-      Based on <strong class="text-white">{site.googleReviewCount}+</strong> Google reviews
-    </p>
-
-    {site.features.reviewsWidget ? (
-      <div class="mt-8 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-8 text-sm text-white/50">
-        [ Embedded live reviews widget renders here — wire in your provider's snippet ]
+    {/* Testimonial cards */}
+    {testimonials.length > 0 && (
+      <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5" data-reveal-stagger>
+        {testimonials.map((t) => (
+          <div class="relative bg-white/5 border border-white/10 rounded-[var(--radius,0.75rem)] p-6 backdrop-blur-sm">
+            {/* Quote mark */}
+            <svg class="w-8 h-8 text-[var(--brand-500)] opacity-60 mb-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+            </svg>
+            <p class="text-sm text-slate-300 leading-relaxed">{t.text}</p>
+            <div class="mt-5 flex items-center gap-3">
+              <div
+                class="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
+                style="background: var(--brand-600);"
+              >
+                {t.name.charAt(0)}
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-white">{t.name}</p>
+                {t.role && <p class="text-xs text-slate-500 mt-0.5">{t.role}</p>}
+              </div>
+              <div class="ml-auto flex gap-0.5">
+                {Array.from({ length: t.rating ?? 5 }).map(() => (
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" fill="currentColor" class="w-3 h-3 text-amber-400">
+                    <path d="M5.34 1.52a.72.72 0 0 1 1.32 0l.91 2.29 2.47.18a.72.72 0 0 1 .41 1.27l-1.88 1.62.57 2.4a.72.72 0 0 1-1.07.78L6 8.78l-2.07 1.28a.72.72 0 0 1-1.07-.78l.57-2.4L1.55 5.26a.72.72 0 0 1 .41-1.27l2.47-.18.91-2.29Z" />
+                  </svg>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
-    ) : (
-      <a
-        href={site.googleReviewLink}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="mt-8 inline-flex items-center justify-center gap-2.5 rounded-[var(--radius,0.75rem)] bg-white text-[var(--brand-700)] px-6 py-3 text-base font-semibold shadow-lg hover:bg-[var(--brand-50)] transition-colors"
-      >
-        <svg viewBox="0 0 24 24" class="w-5 h-5" aria-hidden="true">
-          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-        </svg>
-        Read Our Reviews on Google
-      </a>
     )}
+
+    {/* CTA */}
+    <div class="mt-12 text-center">
+      {site.features.reviewsWidget ? (
+        <div class="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-8 text-sm text-white/50">
+          [ Live reviews widget renders here — wire in your provider's snippet ]
+        </div>
+      ) : (
+        <a
+          href={site.googleReviewLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center gap-2.5 rounded-[var(--radius,0.75rem)] bg-white text-slate-800 px-7 py-3.5 text-base font-bold shadow-xl hover:bg-slate-50 transition-colors"
+        >
+          <svg viewBox="0 0 24 24" class="w-5 h-5 flex-shrink-0" aria-hidden="true">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          Read Our Reviews on Google
+        </a>
+      )}
+    </div>
   </div>
 </section>

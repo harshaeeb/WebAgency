@@ -1,10 +1,5 @@
 ---
 // src/components/ClickToCall.astro
-//
-// A reusable click-to-call CTA for use mid-page (e.g. after a services
-// section), separate from the persistent one in Header.astro. Trade
-// business customers frequently prefer calling over filling out a form —
-// repeating this CTA at natural decision points improves conversion.
 import { site } from "../config/site";
 
 interface Props {
@@ -13,12 +8,21 @@ interface Props {
 const { label = `Call ${site.business}` } = Astro.props;
 ---
 
-<a
-  href={`tel:${site.phone}`}
-  class="inline-flex items-center gap-2 rounded-lg bg-[var(--brand)] text-white px-6 py-3 text-base font-semibold shadow-sm hover:bg-[var(--brand-dark)] transition-colors"
->
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
-    <path d="M2.25 6.75c0-1.36 1.04-2.598 2.43-2.534.86.04 1.7.18 2.5.42a1.5 1.5 0 0 1 1.04 1.25l.4 2.46a1.5 1.5 0 0 1-.42 1.36l-1.2 1.2a14.93 14.93 0 0 0 6.34 6.34l1.2-1.2a1.5 1.5 0 0 1 1.36-.42l2.46.4a1.5 1.5 0 0 1 1.25 1.04c.24.8.38 1.64.42 2.5.064 1.39-1.174 2.43-2.534 2.43H18A15.75 15.75 0 0 1 2.25 8.25V6.75Z" />
-  </svg>
-  {label} &mdash; {site.phoneDisplay}
-</a>
+<div class="relative inline-flex">
+  <span
+    class="absolute inset-0 rounded-[var(--radius,0.75rem)] bg-[var(--brand-400)] cta-ping pointer-events-none"
+    aria-hidden="true"
+  ></span>
+  <a
+    href={`tel:${site.phone}`}
+    class="relative inline-flex items-center gap-3 rounded-[var(--radius,0.75rem)] bg-[var(--brand)] text-white px-7 py-3.5 text-base font-bold shadow-lg shadow-[var(--brand-300)]/40 hover:bg-[var(--brand-dark)] transition-all hover:shadow-xl"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0">
+      <path d="M2.25 6.75c0-1.36 1.04-2.598 2.43-2.534.86.04 1.7.18 2.5.42a1.5 1.5 0 0 1 1.04 1.25l.4 2.46a1.5 1.5 0 0 1-.42 1.36l-1.2 1.2a14.93 14.93 0 0 0 6.34 6.34l1.2-1.2a1.5 1.5 0 0 1 1.36-.42l2.46.4a1.5 1.5 0 0 1 1.25 1.04c.24.8.38 1.64.42 2.5.064 1.39-1.174 2.43-2.534 2.43H18A15.75 15.75 0 0 1 2.25 8.25V6.75Z" />
+    </svg>
+    <span>
+      {label}
+      <span class="ml-1 opacity-80">— {site.phoneDisplay}</span>
+    </span>
+  </a>
+</div>
