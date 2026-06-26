@@ -83,11 +83,24 @@ const schema = {
       }
     </style>
   </head>
-  <body class="min-h-screen flex flex-col font-sans text-slate-800 antialiased">
+  <body class={`min-h-screen flex flex-col font-sans text-slate-800 antialiased round-${site.theme?.roundness ?? "md"}`}>
     <Header />
     <main class="flex-1">
       <slot />
     </main>
     <Footer />
+
+    <script is:inline>
+      // Scroll-reveal: fires once per element when it enters the viewport.
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("revealed");
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      document.querySelectorAll("[data-reveal],[data-reveal-stagger]").forEach((el) => io.observe(el));
+    </script>
   </body>
 </html>

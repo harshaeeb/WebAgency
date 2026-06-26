@@ -24,20 +24,47 @@
 
 export interface Service {
   name: string;
-  slug: string;          // used in the URL: /services/[slug]
+  slug: string;             // used in the URL: /services/[slug]
   shortDescription: string; // one sentence, shown on the services grid
   description: string;      // longer paragraph, shown on the service's own page
-  image?: string;            // path under /images/, e.g. "/images/drain-cleaning.jpg" — manually uploaded, leave unset to show the placeholder
+  image?: string;           // path under /images/ — manually uploaded, leave unset to show placeholder
 }
 
 export interface SiteImages {
-  hero?: string;   // homepage hero photo, e.g. "/images/hero.jpg" — manually uploaded, leave unset to show the placeholder
+  hero?: string;   // homepage hero photo, e.g. "/images/hero.jpg" — manually uploaded
   about?: string;  // about-page photo — same convention as hero
+}
+
+// ─── Visual theme knobs ────────────────────────────────────────────────────────
+// All fields are optional — safe to omit entirely. Defaults are applied in each
+// component. Change these to differentiate a client's site without touching any
+// component files.
+export interface SiteTheme {
+  // Header background: "white" = white + border (default), "brand" = brand-700 bg + white text
+  headerStyle?: "white" | "brand";
+
+  // Hero layout: "split" = text-left / image-right (default), "centered" = centered text only
+  heroLayout?: "split" | "centered";
+
+  // Show a subtle dot-grid pattern behind the hero section (default: true)
+  heroPattern?: boolean;
+
+  // Footer background: "dark" = slate-900 (default), "brand" = brand-900
+  footerStyle?: "dark" | "brand";
+
+  // Whether to show the TrustBar strip (years, reviews, licensed, areas) below Hero (default: true)
+  showTrustBar?: boolean;
+
+  // Card/button corner radius: "sm" | "md" (default) | "lg" | "full"
+  roundness?: "sm" | "md" | "lg" | "full";
 }
 
 export interface SiteConfig {
   business: string;
   tagline: string;
+  // Short eyebrow label shown above the tagline in the Hero section.
+  // e.g. "Frisco's Most-Trusted Plumber" — keep under 60 chars.
+  heroEyebrow?: string;
   phone: string;
   phoneDisplay: string;  // human-friendly formatting, e.g. "(972) 555-0148"
   email: string;
@@ -49,11 +76,17 @@ export interface SiteConfig {
   serviceAreas: string[];
   services: Service[];
   images: SiteImages;
-  brandColor: string;
+  brandColor: string;    // single hex value — drives the entire color palette via palette.ts
   yearsInBusiness: number;
   googleReviewLink: string;
   googleRating: number;
   googleReviewCount: number;
+
+  // Optional tagline override shown in the footer. Defaults to site.tagline.
+  footerTagline?: string;
+
+  // Optional visual theme overrides. All fields default to the values noted in SiteTheme.
+  theme?: SiteTheme;
 
   features: {
     reviewsWidget: boolean;  // upsell: live embedded Google reviews widget
@@ -68,6 +101,7 @@ export interface SiteConfig {
 export const site: SiteConfig = {
   business: "Smith Plumbing Co.",
   tagline: "Fast, honest plumbing for Frisco and the North Dallas area",
+  heroEyebrow: "Serving Frisco & North Dallas Since 2012",
   phone: "+19725550148",
   phoneDisplay: "(972) 555-0148",
   email: "smith@smithplumbing.com",
@@ -103,18 +137,26 @@ export const site: SiteConfig = {
   ],
 
   images: {
-    // Demo starts with no images uploaded — this is the real starting
-    // state for a new client build. Drop files into public/images/ and
-    // uncomment/set these once real photos are available, e.g.:
-       hero: "/images/hero.jpg",
+    // Demo starts with no images — drop files into public/images/ and set these:
+    hero: "/images/hero.jpg",
     //   about: "/images/about.jpg",
   },
 
-  brandColor: "#1F6FEB",
+  brandColor: "#1a6fd4",   // light blue — change this single value to re-theme the entire site
   yearsInBusiness: 12,
   googleReviewLink: "https://g.page/r/REPLACE_ME/review",
   googleRating: 4.9,
   googleReviewCount: 87,
+
+  // Theme: all fields below are optional — remove any line to use its default
+  theme: {
+    headerStyle: "white",
+    heroLayout: "split",
+    heroPattern: true,
+    footerStyle: "dark",
+    showTrustBar: true,
+    roundness: "md",
+  },
 
   features: {
     reviewsWidget: false,

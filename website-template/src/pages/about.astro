@@ -11,27 +11,26 @@ const aboutImage = resolveImage(site.images?.about);
 ---
 
 <Base title={title} description={description}>
-  <section class="bg-[var(--brand-50)] border-b border-[var(--brand-100)]">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-      <p class="text-sm font-medium text-[var(--brand-700)] uppercase tracking-wide mb-2">About Us</p>
+  <section class="relative overflow-hidden bg-gradient-to-b from-[var(--brand-50)] to-white border-b border-[var(--brand-100)]">
+    <div class="pointer-events-none absolute -top-16 -right-16 w-64 h-64 rounded-full bg-[var(--brand-200)] opacity-30 blur-3xl" aria-hidden="true"></div>
+    <div class="relative max-w-5xl mx-auto px-4 sm:px-6 py-12" data-reveal>
+      <span class="inline-block text-xs font-bold text-[var(--brand-600)] uppercase tracking-widest mb-3 bg-[var(--brand-50)] border border-[var(--brand-100)] rounded-full px-3 py-1">
+        Our Story
+      </span>
       <h1 class="text-3xl sm:text-4xl font-bold text-slate-900">About {site.business}</h1>
     </div>
   </section>
 
-  <section class="max-w-4xl mx-auto px-4 sm:px-6 py-16 grid md:grid-cols-2 gap-10 items-start">
-    <div class="space-y-4 text-slate-700 leading-relaxed">
-      <!--
-        Replace this placeholder copy with the client's real story —
-        how the business started, what they're known for locally, and
-        what makes them trustworthy. Keep it specific and human; avoid
-        generic "we pride ourselves on quality" filler.
-      -->
-      <p>
+  <section class="max-w-5xl mx-auto px-4 sm:px-6 py-16 grid md:grid-cols-2 gap-12 items-start">
+    <div class="space-y-5 text-slate-600 leading-relaxed" data-reveal-stagger>
+      <p class="text-lg text-slate-700 font-medium">
         For {site.yearsInBusiness}+ years, {site.business} has provided honest,
-        reliable plumbing service to homeowners and businesses across{" "}
-        {site.serviceAreas.join(", ")}. [Replace with the owner's real story —
-        how the business started, what they specialize in, and what local
-        customers can expect.]
+        reliable service to homeowners and businesses across{" "}
+        {site.serviceAreas.join(", ")}.
+      </p>
+      <p>
+        [Replace with the owner's real story — how the business started,
+        what they specialize in, and what local customers can expect.]
       </p>
       <p>
         We believe in straight answers and fair pricing — no surprise fees,
@@ -40,25 +39,38 @@ const aboutImage = resolveImage(site.images?.about);
         in {site.city} and the surrounding area.
       </p>
 
-      <div class="pt-4">
+      <div class="pt-4 grid grid-cols-2 gap-4">
+        <div class="rounded-[var(--radius,0.75rem)] bg-[var(--brand-50)] border border-[var(--brand-100)] p-4">
+          <p class="text-3xl font-bold text-[var(--brand-700)]">{site.yearsInBusiness}+</p>
+          <p class="text-sm text-slate-500 mt-1">Years in business</p>
+        </div>
+        <div class="rounded-[var(--radius,0.75rem)] bg-amber-50 border border-amber-100 p-4">
+          <p class="text-3xl font-bold text-amber-600">{site.googleRating}★</p>
+          <p class="text-sm text-slate-500 mt-1">{site.googleReviewCount}+ Google reviews</p>
+        </div>
+      </div>
+
+      <div class="pt-2">
         <ClickToCall />
       </div>
     </div>
 
-    {aboutImage ? (
-      <div class="aspect-[4/3] rounded-2xl overflow-hidden shadow-lg shadow-[var(--brand-100)] ring-1 ring-slate-900/5">
-        <img
-          src={aboutImage}
-          alt={`${site.business} team`}
-          class="w-full h-full object-cover"
-          width="640"
-          height="480"
-        />
-      </div>
-    ) : (
-      <div class="aspect-[4/3] rounded-2xl bg-[var(--brand-50)] border border-[var(--brand-100)] flex items-center justify-center text-[var(--brand-400)] text-sm">
-        [ About image goes here — see site.images.about ]
-      </div>
-    )}
+    <div data-reveal>
+      {aboutImage ? (
+        <div class="aspect-[4/3] rounded-[var(--radius,0.75rem)] overflow-hidden shadow-xl shadow-[var(--brand-100)] ring-1 ring-[var(--brand-100)]">
+          <img
+            src={aboutImage}
+            alt={`${site.business} team`}
+            class="w-full h-full object-cover"
+            width="640"
+            height="480"
+          />
+        </div>
+      ) : (
+        <div class="aspect-[4/3] rounded-[var(--radius,0.75rem)] bg-gradient-to-br from-[var(--brand-50)] to-[var(--brand-100)] border border-[var(--brand-200)] flex items-center justify-center text-[var(--brand-400)] text-sm">
+          [ About image goes here — see site.images.about ]
+        </div>
+      )}
+    </div>
   </section>
 </Base>

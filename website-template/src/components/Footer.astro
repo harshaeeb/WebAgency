@@ -1,28 +1,45 @@
 ---
 // src/components/Footer.astro
+// theme.footerStyle: "dark" = slate-900 bg (default), "brand" = brand-900 bg
 import { site } from "../config/site";
 
 const year = new Date().getFullYear();
 const mapsQuery = encodeURIComponent(site.address);
+const isBrand = site.theme?.footerStyle === "brand";
+const tagline = site.footerTagline ?? site.tagline;
 ---
 
-<footer class="bg-slate-900 text-slate-300 mt-auto">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
+<footer class={isBrand ? "bg-[var(--brand-900)] text-[var(--brand-200)] mt-auto" : "bg-slate-900 text-slate-300 mt-auto"}>
+  <div class={`h-1 w-full ${isBrand ? "bg-[var(--brand-600)]" : "bg-[var(--brand)]"}`}></div>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10">
     <div>
-      <p class="text-white font-semibold text-lg">{site.business}</p>
-      <p class="mt-2 text-sm text-slate-400">{site.tagline}</p>
+      <p class="text-white font-bold text-lg">{site.business}</p>
+      <p class="mt-2 text-sm opacity-60 leading-relaxed">{tagline}</p>
+      <div class="mt-4 flex items-center gap-1.5 text-xs opacity-50">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-3.5 h-3.5 text-amber-400">
+          <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" />
+        </svg>
+        {site.googleRating} · {site.googleReviewCount}+ Google reviews
+      </div>
     </div>
 
     <div>
-      <p class="text-white font-semibold text-sm uppercase tracking-wide mb-3">Contact</p>
-      <ul class="space-y-2 text-sm">
+      <p class="text-white font-semibold text-xs uppercase tracking-widest mb-4 opacity-70">Contact</p>
+      <ul class="space-y-3 text-sm">
         <li>
-          <a href={`tel:${site.phone}`} class="hover:text-white transition-colors">
+          <a href={`tel:${site.phone}`} class="hover:text-white transition-colors flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 flex-shrink-0 opacity-50">
+              <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511Z" clip-rule="evenodd" />
+            </svg>
             {site.phoneDisplay}
           </a>
         </li>
         <li>
-          <a href={`mailto:${site.email}`} class="hover:text-white transition-colors">
+          <a href={`mailto:${site.email}`} class="hover:text-white transition-colors flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 flex-shrink-0 opacity-50">
+              <path d="M1.75 2h12.5c.966 0 1.75.784 1.75 1.75v8.5A1.75 1.75 0 0 1 14.25 14H1.75A1.75 1.75 0 0 1 0 12.25v-8.5C0 2.784.784 2 1.75 2ZM1.5 5.854v6.396c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V5.854L8.88 9.592a.75.75 0 0 1-.76 0L1.5 5.854Zm.63-2.354 5.87 3.54L13.87 3.5H2.13Z" />
+            </svg>
             {site.email}
           </a>
         </li>
@@ -31,8 +48,11 @@ const mapsQuery = encodeURIComponent(site.address);
             href={`https://www.google.com/maps/search/?api=1&query=${mapsQuery}`}
             target="_blank"
             rel="noopener noreferrer"
-            class="hover:text-white transition-colors"
+            class="hover:text-white transition-colors flex items-start gap-2"
           >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 flex-shrink-0 opacity-50 mt-0.5">
+              <path fill-rule="evenodd" d="M8 1a5 5 0 0 0-5 5c0 3.536 4.24 8.3 4.762 8.87a.329.329 0 0 0 .476 0C8.76 14.3 13 9.536 13 6a5 5 0 0 0-5-5Zm0 6.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z" clip-rule="evenodd" />
+            </svg>
             {site.address}
           </a>
         </li>
@@ -40,23 +60,21 @@ const mapsQuery = encodeURIComponent(site.address);
     </div>
 
     <div>
-      <p class="text-white font-semibold text-sm uppercase tracking-wide mb-3">Service Areas</p>
-      <p class="text-sm text-slate-400">{site.serviceAreas.join(" \u00B7 ")}</p>
+      <p class="text-white font-semibold text-xs uppercase tracking-widest mb-4 opacity-70">Service Areas</p>
+      <div class="flex flex-wrap gap-2">
+        {site.serviceAreas.map((area) => (
+          <span class="text-xs px-2.5 py-1 rounded-full bg-white/10 text-white/70">
+            {area}
+          </span>
+        ))}
+      </div>
     </div>
   </div>
 
-  <div class="border-t border-slate-800 py-5 px-4 sm:px-6 max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+  <div class={`border-t py-5 px-4 sm:px-6 max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs opacity-40 ${isBrand ? "border-[var(--brand-800)]" : "border-slate-800"}`}>
     <p>&copy; {year} {site.business}. All rights reserved.</p>
-    <!--
-      Agency credit per the services contract (Section 7 / Ownership & IP):
-      "The Service Provider may display the completed Website in its
-      portfolio and add a discreet 'Website by [agency]' credit in the
-      footer unless the Client opts out in writing."
-      Replace [Your Agency Name] and the link below with your actual
-      agency details, or remove this line entirely if a client opts out.
-    -->
     <p>
-      Website by <a href="#" class="hover:text-slate-300 transition-colors">[Your Agency Name]</a>
+      Website by <a href="#" class="hover:opacity-80 transition-opacity">[Your Agency Name]</a>
     </p>
   </div>
 </footer>

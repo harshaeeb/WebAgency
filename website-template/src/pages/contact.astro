@@ -10,38 +10,58 @@ const mapsQuery = encodeURIComponent(site.address);
 ---
 
 <Base title={title} description={description}>
-  <section class="max-w-5xl mx-auto px-4 sm:px-6 py-16 grid md:grid-cols-2 gap-12">
-    <div>
-      <h1 class="text-3xl sm:text-4xl font-bold text-slate-900">Get a Free Quote</h1>
-      <p class="mt-3 text-slate-600">
-        Tell us what's going on and we'll get back to you shortly. For
-        anything urgent, call us directly.
+  <section class="relative overflow-hidden bg-gradient-to-b from-[var(--brand-50)] to-white border-b border-[var(--brand-100)]">
+    <div class="pointer-events-none absolute -top-16 -right-16 w-64 h-64 rounded-full bg-[var(--brand-200)] opacity-30 blur-3xl" aria-hidden="true"></div>
+    <div class="relative max-w-5xl mx-auto px-4 sm:px-6 py-12" data-reveal>
+      <span class="inline-block text-xs font-bold text-[var(--brand-600)] uppercase tracking-widest mb-3 bg-[var(--brand-50)] border border-[var(--brand-100)] rounded-full px-3 py-1">
+        Get in Touch
+      </span>
+      <h1 class="text-3xl sm:text-4xl font-bold text-slate-900">Request a Free Quote</h1>
+      <p class="mt-2 text-slate-500 max-w-xl">
+        Tell us what's going on and we'll respond shortly. For anything urgent, call us directly.
       </p>
+    </div>
+  </section>
 
-      <div class="mt-8">
-        <ContactForm />
-      </div>
+  <section class="max-w-5xl mx-auto px-4 sm:px-6 py-16 grid md:grid-cols-5 gap-12">
+    <div class="md:col-span-3" data-reveal>
+      <ContactForm />
     </div>
 
-    <div class="space-y-6">
-      <div class="rounded-xl border border-slate-200 p-6">
-        <h2 class="font-semibold text-slate-900 mb-3">Contact Details</h2>
-        <ul class="space-y-2 text-sm text-slate-600">
+    <div class="md:col-span-2 space-y-5" data-reveal-stagger>
+      <div class="rounded-[var(--radius,0.75rem)] border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 class="font-bold text-slate-900 mb-4 flex items-center gap-2 text-sm uppercase tracking-wide">Contact Details</h2>
+        <ul class="space-y-3 text-sm text-slate-600">
           <li>
-            <a href={`tel:${site.phone}`} class="hover:text-[var(--brand)]">{site.phoneDisplay}</a>
+            <a href={`tel:${site.phone}`} class="hover:text-[var(--brand)] font-medium transition-colors flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 text-[var(--brand-400)] flex-shrink-0">
+                <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511Z" clip-rule="evenodd" />
+              </svg>
+              {site.phoneDisplay}
+            </a>
           </li>
           <li>
-            <a href={`mailto:${site.email}`} class="hover:text-[var(--brand)]">{site.email}</a>
+            <a href={`mailto:${site.email}`} class="hover:text-[var(--brand)] transition-colors flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 text-[var(--brand-400)] flex-shrink-0">
+                <path d="M1.75 2h12.5c.966 0 1.75.784 1.75 1.75v8.5A1.75 1.75 0 0 1 14.25 14H1.75A1.75 1.75 0 0 1 0 12.25v-8.5C0 2.784.784 2 1.75 2ZM1.5 5.854v6.396c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V5.854L8.88 9.592a.75.75 0 0 1-.76 0L1.5 5.854Zm.63-2.354 5.87 3.54L13.87 3.5H2.13Z" />
+              </svg>
+              {site.email}
+            </a>
           </li>
-          <li>{site.address}</li>
+          <li class="flex items-start gap-2 text-slate-500">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 text-[var(--brand-400)] flex-shrink-0 mt-0.5">
+              <path fill-rule="evenodd" d="M8 1a5 5 0 0 0-5 5c0 3.536 4.24 8.3 4.762 8.87a.329.329 0 0 0 .476 0C8.76 14.3 13 9.536 13 6a5 5 0 0 0-5-5Zm0 6.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z" clip-rule="evenodd" />
+            </svg>
+            {site.address}
+          </li>
         </ul>
       </div>
 
-      <div class="rounded-xl border border-slate-200 overflow-hidden">
+      <div class="rounded-[var(--radius,0.75rem)] border border-slate-200 overflow-hidden shadow-sm">
         <iframe
           title={`Map showing ${site.business} location`}
           width="100%"
-          height="280"
+          height="220"
           style="border:0"
           loading="lazy"
           referrerpolicy="no-referrer-when-downgrade"
@@ -49,9 +69,15 @@ const mapsQuery = encodeURIComponent(site.address);
         ></iframe>
       </div>
 
-      <div class="rounded-xl border border-slate-200 p-6">
-        <h2 class="font-semibold text-slate-900 mb-2">Service Areas</h2>
-        <p class="text-sm text-slate-600">{site.serviceAreas.join(" \u00B7 ")}</p>
+      <div class="rounded-[var(--radius,0.75rem)] border border-slate-200 bg-[var(--brand-50)] p-6">
+        <h2 class="font-bold text-slate-900 mb-3 text-sm uppercase tracking-wide">Service Areas</h2>
+        <div class="flex flex-wrap gap-2">
+          {site.serviceAreas.map((area) => (
+            <span class="text-xs px-2.5 py-1 rounded-full bg-white border border-[var(--brand-200)] text-[var(--brand-700)] font-medium">
+              {area}
+            </span>
+          ))}
+        </div>
       </div>
     </div>
   </section>
