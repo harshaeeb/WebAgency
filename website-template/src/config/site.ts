@@ -111,7 +111,7 @@ export const site: SiteConfig = {
   state: "TX",
   zip: "75034",
   serviceAreas: ["Frisco", "Plano", "McKinney", "Allen", "The Colony", "Prosper"],
-   businessStory: "
+   businessStory: "Since 2012, Smith Plumbing Co. has been serving the Frisco and North Dallas area with fast, honest plumbing services. Our team is committed to providing quality work and exceptional customer service, ensuring that every job is done right the first time."
 
   services: [
     {
