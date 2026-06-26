@@ -106,7 +106,7 @@ export const site: SiteConfig = {
     // Demo starts with no images uploaded — this is the real starting
     // state for a new client build. Drop files into public/images/ and
     // uncomment/set these once real photos are available, e.g.:
-    //   hero: "/images/hero.jpg",
+       hero: "/images/hero.jpg",
     //   about: "/images/about.jpg",
   },
 
