@@ -7,8 +7,8 @@ import ReviewsWidget from "../components/ReviewsWidget.astro";
 import BookingEmbed from "../components/BookingEmbed.astro";
 import { site } from "../config/site";
 
-const title = `${site.business} | Plumbing Services in ${site.city}, ${site.state}`;
-const description = `${site.business} provides ${site.services.map(s => s.name.toLowerCase()).join(", ")} for ${site.serviceAreas.join(", ")}. ${site.yearsInBusiness}+ years in business, ${site.googleRating}-star rated.`;
+const title = `${site.business} | Pet Grooming & Boarding in ${site.city}, ${site.state}`;
+const description = `${site.business} offers ${site.services.map(s => s.name.toLowerCase()).join(", ")} for families in ${site.serviceAreas.join(", ")}. ${site.yearsInBusiness}+ years of professional pet care, ${site.googleRating}-star rated.`;
 ---
 
 <Base title={title} description={description}>

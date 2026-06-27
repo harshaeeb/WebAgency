@@ -3,26 +3,27 @@
 /*
   The full brand palette (--brand-50 through --brand-950, plus semantic
   aliases like --brand and --brand-surface) is generated at build time from
-  site.brandColor by src/utils/palette.ts and injected in Base.astro.
+  site.brandColor by src/utils/palette.ts and injected in Base.astro. The
+  fallback values below only apply before that injected <style> block loads.
 */
 :root {
-  --brand: #1a6fd4;
-  --brand-surface: #eff6ff;
+  --brand: #7c3aed;
+  --brand-surface: #f5f3ff;
 }
 
 html {
   scroll-behavior: smooth;
 }
 
-/* ── Dot-grid hero pattern ───────────────────────────────────────────────── */
+/* ── Dot-grid hero pattern ────────────────────────────────────────────────── */
 .hero-pattern {
   background-image: radial-gradient(circle, var(--brand-200) 1px, transparent 1px);
-  background-size: 28px 28px;
+  background-size: 24px 24px;
 }
 
-/* ── Scroll-reveal animations ────────────────────────────────────────────── */
+/* ── Scroll-reveal animations ─────────────────────────────────────────────── */
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(28px); }
+  from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -31,53 +32,59 @@ html {
   to   { opacity: 1; }
 }
 
+/* Pulsing ring animation for phone CTAs */
+@keyframes cta-ping {
+  0%   { transform: scale(1);    opacity: 0.6; }
+  70%  { transform: scale(1.4);  opacity: 0; }
+  100% { transform: scale(1.4);  opacity: 0; }
+}
+.cta-ping {
+  animation: cta-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Card lift on hover */
+.card-lift {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px -4px var(--brand-200, rgba(124,58,237,0.2));
+}
+
 [data-reveal] {
   opacity: 0;
 }
 [data-reveal].revealed {
-  animation: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fade-up 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 [data-reveal-stagger] > * {
   opacity: 0;
 }
-[data-reveal-stagger].revealed > *:nth-child(1) { animation: fade-up 0.55s 0.05s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-[data-reveal-stagger].revealed > *:nth-child(2) { animation: fade-up 0.55s 0.13s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-[data-reveal-stagger].revealed > *:nth-child(3) { animation: fade-up 0.55s 0.21s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-[data-reveal-stagger].revealed > *:nth-child(4) { animation: fade-up 0.55s 0.29s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-[data-reveal-stagger].revealed > *:nth-child(5) { animation: fade-up 0.55s 0.37s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-[data-reveal-stagger].revealed > *:nth-child(6) { animation: fade-up 0.55s 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-[data-reveal-stagger].revealed > *:nth-child(7) { animation: fade-up 0.55s 0.53s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-[data-reveal-stagger].revealed > *:nth-child(8) { animation: fade-up 0.55s 0.61s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+[data-reveal-stagger].revealed > *:nth-child(1) { animation: fade-up 0.55s 0.05s cubic-bezier(0.16,1,0.3,1) forwards; }
+[data-reveal-stagger].revealed > *:nth-child(2) { animation: fade-up 0.55s 0.12s cubic-bezier(0.16,1,0.3,1) forwards; }
+[data-reveal-stagger].revealed > *:nth-child(3) { animation: fade-up 0.55s 0.19s cubic-bezier(0.16,1,0.3,1) forwards; }
+[data-reveal-stagger].revealed > *:nth-child(4) { animation: fade-up 0.55s 0.26s cubic-bezier(0.16,1,0.3,1) forwards; }
+[data-reveal-stagger].revealed > *:nth-child(5) { animation: fade-up 0.55s 0.33s cubic-bezier(0.16,1,0.3,1) forwards; }
+[data-reveal-stagger].revealed > *:nth-child(6) { animation: fade-up 0.55s 0.40s cubic-bezier(0.16,1,0.3,1) forwards; }
+[data-reveal-stagger].revealed > *:nth-child(7) { animation: fade-up 0.55s 0.47s cubic-bezier(0.16,1,0.3,1) forwards; }
+[data-reveal-stagger].revealed > *:nth-child(8) { animation: fade-up 0.55s 0.54s cubic-bezier(0.16,1,0.3,1) forwards; }
 
-/* ── Card hover lift ─────────────────────────────────────────────────────── */
-.card-lift {
-  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease;
-}
-.card-lift:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 24px 48px -8px color-mix(in srgb, var(--brand-200) 60%, transparent),
-              0 8px 16px -4px rgba(0,0,0,0.06);
-}
-
-/* ── Pulse ring for phone CTAs ───────────────────────────────────────────── */
-@keyframes cta-ping {
-  0%   { transform: scale(1); opacity: 0.5; }
-  75%  { transform: scale(1.6); opacity: 0; }
-  100% { transform: scale(1.6); opacity: 0; }
-}
-.cta-ping {
-  animation: cta-ping 2.2s ease-out infinite;
-}
-
-/* ── Mobile nav ──────────────────────────────────────────────────────────── */
-#mobile-nav {
-  max-height: 0;
+/* ── Section dividers ─────────────────────────────────────────────────────── */
+.divider-wave {
+  position: relative;
   overflow: hidden;
-  transition: max-height 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
-#mobile-nav.open {
-  max-height: 320px;
+.divider-wave::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: white;
+  clip-path: ellipse(55% 100% at 50% 100%);
 }
 
 /* ── Roundness scale ─────────────────────────────────────────────────────── */

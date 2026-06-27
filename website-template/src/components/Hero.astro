@@ -13,146 +13,145 @@ const eyebrow = site.heroEyebrow ?? `Serving ${site.serviceAreas.slice(0, 3).joi
 
 <section
   class={`relative overflow-hidden ${showPattern ? "hero-pattern" : ""}`}
-  style="background: linear-gradient(155deg, var(--brand-50) 0%, #f8fafc 55%, #fff 100%);"
+  style="background: linear-gradient(155deg, var(--brand-50) 0%, #f8fafc 55%, #fff 100%); border-bottom: 1px solid var(--brand-100);"
 >
-  <!-- Decorative blobs -->
-  <div
-    class="pointer-events-none absolute -top-48 -right-48 w-[640px] h-[640px] rounded-full opacity-[0.18] blur-3xl"
-    style="background: radial-gradient(circle, var(--brand-400), var(--brand-200));"
-    aria-hidden="true"
-  ></div>
-  <div
-    class="pointer-events-none absolute bottom-0 -left-32 w-80 h-80 rounded-full opacity-20 blur-3xl"
-    style="background: var(--brand-100);"
-    aria-hidden="true"
-  ></div>
+  <!-- Glow blobs -->
+  <div class="pointer-events-none absolute -top-32 -right-32 w-[520px] h-[520px] rounded-full opacity-25 blur-3xl" style="background: var(--brand-300);" aria-hidden="true"></div>
+  <div class="pointer-events-none absolute -bottom-20 -left-20 w-72 h-72 rounded-full opacity-30 blur-2xl" style="background: var(--brand-100);" aria-hidden="true"></div>
+  <div class="absolute inset-0 bg-white/50" aria-hidden="true"></div>
 
   <div
-    class={`relative max-w-6xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-20 ${
+    class={`relative max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24 ${
       isCentered
         ? "flex flex-col items-center text-center gap-8"
-        : "grid md:grid-cols-2 gap-12 lg:gap-20 items-center"
+        : "grid md:grid-cols-2 gap-12 items-center"
     }`}
   >
-    <!-- ── Text column ── -->
+    <!-- Text block -->
     <div data-reveal-stagger class={isCentered ? "max-w-2xl" : ""}>
-
-      <!-- Eyebrow chip -->
-      <div class="inline-flex items-center gap-2 bg-[var(--brand-100)] border border-[var(--brand-200)] text-[var(--brand-700)] text-xs font-bold uppercase tracking-widest rounded-full px-4 py-1.5 mb-6">
-        <span class="w-1.5 h-1.5 rounded-full bg-[var(--brand-500)] animate-pulse flex-shrink-0"></span>
+      <!-- Eyebrow pill -->
+      <span class="inline-flex items-center gap-1.5 text-sm font-semibold rounded-full px-3.5 py-1 mb-5 border" style="color: var(--brand-700); background: var(--brand-100); border-color: var(--brand-200);">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5" style="color: var(--brand-500);">
+          <path d="M9.653 16.915l-.005-.003-.019-.01a20.759 20.759 0 0 1-1.162-.682 22.045 22.045 0 0 1-2.582-2.184C4.045 12.733 2 10.352 2 7.5a4.5 4.5 0 0 1 8-2.828A4.5 4.5 0 0 1 18 7.5c0 2.852-2.044 5.233-3.885 6.82a22.049 22.049 0 0 1-3.744 2.862l-.019.01-.005.003h-.002a.739.739 0 0 1-.69.001l-.002-.001Z" />
+        </svg>
         {eyebrow}
-      </div>
+      </span>
 
       <!-- Headline -->
-      <h1 class="text-4xl sm:text-5xl lg:text-[3.4rem] font-black text-slate-900 leading-[1.08] tracking-tight">
+      <h1 class="text-4xl sm:text-5xl lg:text-[3.25rem] font-black text-slate-900 leading-tight tracking-tight">
         {site.tagline}
       </h1>
 
-      <!-- Sub-copy -->
-      <p class="mt-5 text-lg text-slate-500 leading-relaxed max-w-lg">
-        {site.yearsInBusiness}+ years of trusted service across {site.serviceAreas.slice(0, 3).join(", ")}.
-        Rated <strong class="text-slate-700 font-semibold">{site.googleRating}★</strong> by {site.googleReviewCount}+ happy customers.
+      <p class="mt-5 text-lg text-slate-600 leading-relaxed">
+        {site.yearsInBusiness}+ years caring for North Dallas pets —
+        {site.googleReviewCount}+ five-star reviews from happy pet parents.
       </p>
 
       <!-- CTAs -->
-      <div class="mt-8 flex flex-wrap gap-3 items-center">
-        <!-- Primary: phone with ping animation -->
+      <div class="mt-8 flex flex-wrap gap-3">
+        <!-- Pulsing phone CTA -->
         <div class="relative inline-flex">
-          <span
-            class="absolute inset-0 rounded-[var(--radius,0.75rem)] bg-[var(--brand-400)] cta-ping pointer-events-none"
-            aria-hidden="true"
-          ></span>
+          <span class="absolute inset-0 rounded-[var(--radius,1.25rem)] cta-ping pointer-events-none" style="background: var(--brand-400);"></span>
           <a
             href={`tel:${site.phone}`}
-            class="relative inline-flex items-center gap-2.5 rounded-[var(--radius,0.75rem)] bg-[var(--brand)] text-white px-7 py-3.5 text-base font-bold shadow-lg shadow-[var(--brand-300)]/40 hover:bg-[var(--brand-dark)] transition-all duration-200 hover:shadow-xl hover:shadow-[var(--brand-200)]/50"
+            class="relative inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-bold text-white shadow-lg transition-colors rounded-[var(--radius,1.25rem)]"
+            style="background: var(--brand); box-shadow: 0 4px 20px var(--brand-300);"
+            onmouseover="this.style.background='var(--brand-dark)'" onmouseout="this.style.background='var(--brand)'"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 flex-shrink-0">
-              <path fill-rule="evenodd" d="M2 3.5A1.5 1.5 0 0 1 3.5 2h1.148a1.5 1.5 0 0 1 1.465 1.175l.716 3.223a1.5 1.5 0 0 1-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 0 0 6.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 0 1 1.767-1.052l3.223.716A1.5 1.5 0 0 1 18 15.352V16.5a1.5 1.5 0 0 1-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 0 1 2.43 8.326 13.019 13.019 0 0 1 2 5V3.5Z" clip-rule="evenodd" />
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+              <path d="M2 3.5A1.5 1.5 0 0 1 3.5 2h1.148a1.5 1.5 0 0 1 1.465 1.175l.716 3.223a1.5 1.5 0 0 1-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 0 0 6.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 0 1 1.767-1.052l3.223.716A1.5 1.5 0 0 1 18 15.352V16.5a1.5 1.5 0 0 1-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 0 1 2.43 8.326 13.019 13.019 0 0 1 2 5V3.5Z" />
             </svg>
             Call {site.phoneDisplay}
           </a>
         </div>
 
-        <!-- Secondary: free quote -->
         <a
           href="/contact"
-          class="inline-flex items-center gap-2 rounded-[var(--radius,0.75rem)] border-2 border-[var(--brand-300)] text-[var(--brand-700)] bg-white px-7 py-3.5 text-base font-semibold hover:bg-[var(--brand-50)] hover:border-[var(--brand-500)] transition-all duration-200"
+          class="inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-semibold border-2 bg-white/80 backdrop-blur-sm transition-colors rounded-[var(--radius,1.25rem)]"
+          style="color: var(--brand-700); border-color: var(--brand-300);"
+          onmouseover="this.style.background='var(--brand-50)'; this.style.borderColor='var(--brand-400)';" onmouseout="this.style.background='rgba(255,255,255,0.8)'; this.style.borderColor='var(--brand-300)';"
         >
-          Free Quote
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4">
-            <path fill-rule="evenodd" d="M2 8a.75.75 0 0 1 .75-.75h8.69L8.22 4.03a.75.75 0 0 1 1.06-1.06l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 0 1-1.06-1.06l3.22-3.22H2.75A.75.75 0 0 1 2 8Z" clip-rule="evenodd" />
-          </svg>
+          Book a Grooming
         </a>
       </div>
 
-      <!-- Social proof strip -->
-      <div class="mt-8 flex items-center gap-4">
-        <!-- Avatar stack -->
-        <div class="flex -space-x-2.5" aria-hidden="true">
-          {["var(--brand-400)","var(--brand-500)","var(--brand-600)","var(--brand-700)"].map((c, i) => (
+      <!-- Avatar stack social proof -->
+      <div class="mt-7 flex items-center gap-3">
+        <div class="flex -space-x-2.5">
+          {["S","C","J","M"].map((initial, i) => (
             <div
-              class="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0"
-              style={`background: ${c};`}
+              class="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-xs font-bold text-white"
+              style={`background: var(--brand-${[400,500,600,700][i]});`}
             >
-              {["J","C","S","M"][i]}
+              {initial}
             </div>
           ))}
         </div>
-        <div>
-          <div class="flex items-center gap-0.5 mb-0.5">
+        <div class="text-sm text-slate-500">
+          <span class="flex gap-0.5 mb-0.5">
             {Array.from({ length: 5 }).map(() => (
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-3.5 h-3.5 text-amber-400">
                 <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" />
               </svg>
             ))}
-          </div>
-          <p class="text-xs text-slate-500">
-            <strong class="text-slate-700">{site.googleRating}</strong> · {site.googleReviewCount}+ Google reviews
-          </p>
+          </span>
+          <strong class="text-slate-700">{site.googleRating}</strong> · {site.googleReviewCount}+ happy pet parents
         </div>
       </div>
     </div>
 
-    <!-- ── Image column ── -->
+    <!-- Image / placeholder block -->
     {!isCentered && (
-      <div data-reveal class="relative mt-8 md:mt-0">
+      <div data-reveal class="relative">
         {heroImage ? (
-          <div class="relative aspect-[4/3.2] rounded-2xl overflow-hidden shadow-2xl shadow-[var(--brand-300)]/30 ring-2 ring-[var(--brand-100)]">
+          <div class="aspect-[4/3] overflow-hidden shadow-2xl ring-1" style="border-radius: var(--radius,1.25rem); box-shadow: 0 24px 60px var(--brand-200); ring-color: var(--brand-100);">
             <img
               src={heroImage}
-              alt={`${site.business} team and service vehicle`}
+              alt={`${site.business} — professional pet grooming in ${site.city}, TX`}
               class="w-full h-full object-cover"
               width="800"
-              height="640"
+              height="600"
             />
-            <div class="absolute inset-0 bg-gradient-to-t from-[var(--brand-950)]/25 via-transparent to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent"></div>
           </div>
         ) : (
-          <div class="relative aspect-[4/3.2] rounded-2xl border-2 border-dashed border-[var(--brand-200)] bg-gradient-to-br from-[var(--brand-50)] via-[var(--brand-100)] to-[var(--brand-50)] flex flex-col items-center justify-center gap-3 text-[var(--brand-400)]">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="w-14 h-14 opacity-30">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+          <div class="aspect-[4/3] flex flex-col items-center justify-center gap-4 border" style="border-radius: var(--radius,1.25rem); background: linear-gradient(135deg, var(--brand-50), var(--brand-100)); border-color: var(--brand-200);">
+            <!-- Paw print placeholder -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="w-16 h-16" style="color: var(--brand-300);" fill="currentColor">
+              <ellipse cx="16" cy="20" rx="5" ry="7" />
+              <ellipse cx="30" cy="14" rx="5" ry="7" />
+              <ellipse cx="44" cy="18" rx="5" ry="7" />
+              <ellipse cx="54" cy="32" rx="5" ry="7" transform="rotate(20 54 32)"/>
+              <path d="M32 28c-10 0-18 6-16 16 1 5 6 10 16 10s15-5 16-10c2-10-6-16-16-16Z"/>
             </svg>
-            <p class="text-sm">[ Hero image — see site.images.hero ]</p>
+            <p class="text-sm font-medium" style="color: var(--brand-400);">
+              [ Client photo goes here ]
+            </p>
           </div>
         )}
 
-        <!-- Floating badge: Licensed & Insured -->
-        <div class="absolute -bottom-5 -left-5 z-10 bg-white rounded-xl shadow-xl shadow-slate-200/80 border border-slate-100 px-4 py-3 flex items-center gap-3">
-          <div class="w-9 h-9 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-green-600">
+        <!-- Floating badge: Certified Groomers -->
+        <div class="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-xl border border-slate-100 px-4 py-3 flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style="background: var(--brand-100);">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5" style="color: var(--brand-600);">
               <path fill-rule="evenodd" d="M16.403 12.652a3 3 0 0 0 0-5.304 3 3 0 0 0-3.75-3.751 3 3 0 0 0-5.305 0 3 3 0 0 0-3.751 3.75 3 3 0 0 0 0 5.305 3 3 0 0 0 3.75 3.751 3 3 0 0 0 5.305 0 3 3 0 0 0 3.751-3.75Zm-2.546-4.46a.75.75 0 0 0-1.214-.883l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" />
             </svg>
           </div>
           <div>
-            <p class="text-xs font-bold text-slate-900 leading-tight">Licensed & Insured</p>
-            <p class="text-[11px] text-slate-500 mt-0.5">{site.yearsInBusiness}+ years in {site.city}</p>
+            <p class="text-xs font-bold text-slate-900">Certified Groomers</p>
+            <p class="text-xs text-slate-500">{site.yearsInBusiness}+ years experience</p>
           </div>
         </div>
 
-        <!-- Floating badge: 24/7 -->
-        <div class="absolute -top-4 -right-4 z-10 rounded-xl bg-[var(--brand)] text-white px-4 py-2.5 shadow-lg shadow-[var(--brand-400)]/40">
-          <p class="text-xs font-bold leading-tight">24/7 Emergency</p>
-          <p class="text-[11px] opacity-75 mt-0.5">Available Now</p>
+        <!-- Floating badge: Cage-Free -->
+        <div class="absolute -top-4 -right-4 rounded-2xl shadow-xl border px-4 py-3 flex items-center gap-2" style="background: var(--brand-600); border-color: var(--brand-700);">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 text-white/80 flex-shrink-0">
+            <path d="M9.653 16.915l-.005-.003-.019-.01a20.759 20.759 0 0 1-1.162-.682 22.045 22.045 0 0 1-2.582-2.184C4.045 12.733 2 10.352 2 7.5a4.5 4.5 0 0 1 8-2.828A4.5 4.5 0 0 1 18 7.5c0 2.852-2.044 5.233-3.885 6.82a22.049 22.049 0 0 1-3.744 2.862l-.019.01-.005.003h-.002a.739.739 0 0 1-.69.001l-.002-.001Z" />
+          </svg>
+          <div>
+            <p class="text-xs font-bold text-white">Cage-Free</p>
+            <p class="text-xs text-white/70">& Stress-Free</p>
+          </div>
         </div>
       </div>
     )}
