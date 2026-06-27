@@ -1,110 +1,164 @@
-# CLAUDE.md — Repository Root
+# CLAUDE.md
 
-This repo has two parts:
+## What this repo is
 
-- `docs/` — business documents (contract template, financial model,
-  outreach scripts, and the full technical strategy doc). Reference
-  material, not code. Read `docs/Website_Development_Hosting_Strategy.docx`
-  for the reasoning behind every architectural decision below if you need
-  the "why," not just the "what."
-- `website-template/` — the actual Astro project. **This is almost
-  certainly what you're here to work on.** It has its own `CLAUDE.md` with
-  detailed build conventions, a per-client build checklist, and an SEO
-  checklist — read `website-template/CLAUDE.md` before making any changes
-  there.
+A website agency's master template plus its business documents. The
+agency builds and hosts websites for blue-collar trade businesses (HVAC,
+plumbing, electrical, roofing, etc.) in the North Dallas metroplex.
+Revenue model: a one-time build fee plus a recurring monthly care plan.
+The technical architecture is deliberately optimized to keep recurring
+cost near $0 for every client except the SMS upsell, which has real
+per-message cost and is always priced separately.
 
-## Quick orientation
+```
+WebAgency/
+├── CLAUDE.md                    ← this file
+├── docs/                        ← business documents (reference material, not code)
+│   ├── Website_Development_Hosting_Strategy.docx
+│   ├── Website_Services_Agreement_Template.docx
+│   ├── Cold_Outreach_Templates.docx
+│   └── Local_Website_Business_Financial_Model.xlsx
+└── website-template/             ← the actual Astro project
+```
 
-This is a website agency's master template, cloned and customized per
-client (one client = one repo, started as a copy of `website-template/`).
-The business targets blue-collar trade businesses (HVAC, plumbing,
-electrical, roofing, etc.) in the North Dallas metroplex. Revenue model is
-a one-time build fee plus a recurring monthly care plan; the architecture
-is deliberately optimized to keep recurring cost near $0 except for the
-SMS upsell, which has real per-message cost and is always priced
-separately — see Section 4 of the strategy doc for the full cost table.
+**One client = one repo.** A new client site starts as a copy of
+`website-template/`, not a branch or folder inside this repo.
 
-## Current state (as of this handoff)
+## Golden rule
 
-`website-template/` is a complete, tested, building project — not a
-scaffold:
+**All client-specific content lives in `website-template/src/config/site.ts`
+— nothing else.** Never hard-code a business name, phone number, service,
+color, or address directly into a component or page.
 
-- All pages and components are implemented and working: Home, About,
-  Services (with one dedicated static page per service via
-  `getStaticPaths`), Contact.
-- The visual design uses a build-time-generated brand palette: a single
-  `site.brandColor` hex value is expanded into a full 11-step OKLCH tonal
-  scale (`src/utils/palette.ts`) and injected as CSS variables in every
-  page, driving gradients, tinted section backgrounds, and card depth
-  throughout — not just a single flat accent color.
-- Hero, About, and each service have an image slot (`site.images.hero`,
-  `site.images.about`, `service.image`) — plain string paths pointing at
-  manually uploaded files under `public/images/`. There is no AI
-  generation step anywhere in this template; an earlier version had one,
-  and it was deliberately removed in favor of manual uploads only. Every
-  component resolves its image path through `src/utils/resolveImage.ts`,
-  which checks the actual filesystem at build time, so a path that's set
-  in `site.ts` before the file is uploaded falls back to a labeled,
-  on-brand placeholder box rather than a broken image icon — the site is
-  fully previewable with zero photos in place.
-- `npm run build` passes (7 pages built) and `npx astro check` passes with
-  0 errors, 0 warnings, as of this commit — verified from a true clean
-  `npm ci` checkout, not just the working directory.
-- `src/config/site.ts` is filled in with a realistic demo business ("Smith
-  Plumbing Co.") so the project runs and looks complete out of the box —
-  replace every value in that one file to start a real client build.
-- Both upsell toggles (`features.reviewsWidget`, `features.booking`) were
-  manually tested by temporarily setting them to `true`, confirming the
-  conditional components render, then reverted to their correct default
-  (`false`).
+## Git workflow
 
-## Known gaps — not bugs, just not built yet
+- **Branch:** Always commit directly to `main`
+- **GitHub ops:** Use `mcp__github__push_files` (no local git remote configured in the dev environment)
+- Run `npm run build` and `npx astro check` inside `website-template/` before every push
 
-- **No automated way to source images.** Manual upload is the deliberate
-  convention (see `website-template/CLAUDE.md`, "Image uploads"), not a
-  placeholder for a future pipeline — don't reintroduce AI generation
-  without a deliberate decision to do so. Real client photos or licensed
-  stock images still need to be sourced and dropped into
-  `public/images/` by hand for every build.
-- **`resolveImage.ts` has a fixed but worth-knowing-about bug history.**
-  An earlier implementation resolved `public/` relative to its own
-  compiled module location (`import.meta.dirname`), which broke silently
-  because Astro/Vite bundle that file into a transient build chunk
-  directory at actual build time — every image failed to resolve even
-  when the file genuinely existed, and the type checker caught nothing.
-  Fixed by anchoring to `process.cwd()` instead. If this file is ever
-  touched again, re-verify with a real `npm run build`, not just
-  `astro check` — the bug was only visible in the actual rendered output.
-- **MMS photo attachments in `functions/api/inquiry.ts`**: Twilio's
-  `MediaUrl` parameter needs a public URL; the form currently reads the
-  photo as base64, which can't be passed directly. The fix is uploading
-  the photo to object storage (Cloudflare R2 is the natural choice given
-  the rest of the stack) before calling Twilio, then passing that URL.
-  This only matters once SMS forwarding is actually sold to a client whose
-  leads include photos — not needed for the base build.
-- **Reviews widget embed**: `ReviewsWidget.astro` has a placeholder block
-  for the upsell case (`features.reviewsWidget: true`) — no specific
-  third-party reviews-widget provider has been chosen yet, so there's no
-  real embed snippet wired in. Pick a provider and wire its snippet into
-  that block when the upsell is first sold.
-- **`npm audit` flags a moderate-severity vulnerability** in `yaml`, a
-  transitive dependency of `@astrojs/check` (dev-only editor tooling, not
-  part of the production build or any deployed site). Not fixed
-  deliberately — the available fix is a breaking downgrade of
-  `@astrojs/check` for a dev-tool-only, non-runtime issue. Revisit if a
-  non-breaking fix becomes available upstream.
-- **No real client has been onboarded yet.** Everything here is the
-  template and demo content; there's no second repo yet representing an
-  actual client site.
+## Current state — verified, not assumed
 
-## Working in this repo with Claude Code
+`website-template/` is a complete, tested, building project:
 
-- If you're building a feature or fixing something in the template itself,
-  work in `website-template/` and follow its `CLAUDE.md`.
-- If you're starting a new client build, that's normally a **separate
-  repo** (a clone of `website-template/`), not a change to this repo — see
-  "Per-client build steps" in `website-template/CLAUDE.md`.
-- Run `npm run build` and `npx astro check` from inside `website-template/`
-  before considering any change done — both were clean as of this commit,
-  so a new failure is almost certainly from the change just made, not
-  pre-existing.
+- All pages and components implemented: Home, About, Services (with per-service static pages), Contact
+- `npm run build` (7 pages) and `npx astro check` (0 errors) both pass
+- Upsell toggles (`features.reviewsWidget`, `features.booking`) tested
+- Image fallback behavior tested (missing file → placeholder, real file → renders)
+
+## Repository structure (website-template/)
+
+```
+website-template/
+├── astro.config.mjs
+├── src/
+│   ├── config/
+│   │   └── site.ts             ← THE ONLY FILE THAT CHANGES PER CLIENT
+│   ├── utils/
+│   │   ├── palette.ts          ← OKLCH color scale from site.brandColor
+│   │   └── resolveImage.ts     ← filesystem-checks image paths at build time
+│   ├── components/
+│   │   ├── Header.astro
+│   │   ├── Hero.astro
+│   │   ├── TrustBar.astro
+│   │   ├── ServicesGrid.astro
+│   │   ├── ReviewsWidget.astro
+│   │   ├── ContactForm.astro
+│   │   ├── BookingEmbed.astro
+│   │   ├── ClickToCall.astro
+│   │   └── Footer.astro
+│   ├── layouts/
+│   │   └── Base.astro          ← LocalBusiness schema + brand CSS vars
+│   ├── pages/
+│   │   ├── index.astro
+│   │   ├── about.astro
+│   │   ├── services.astro
+│   │   ├── services/[slug].astro
+│   │   └── contact.astro
+│   └── styles/
+│       └── global.css
+├── functions/
+│   └── api/
+│       └── inquiry.ts          ← Cloudflare Function: email + optional SMS
+└── public/
+    └── images/               ← manually uploaded client photos
+```
+
+## Current design system (redesigned June 2026)
+
+### Component overview
+
+| Component | Design |
+|-----------|--------|
+| **Header** | `bg-white/95 backdrop-blur-md` glassmorphism, mobile hamburger nav, logo initial badge, animated underline on nav links |
+| **Hero** | Split layout, `font-black` headline at `text-5xl lg:text-[3.4rem]`, pulsing phone CTA (`cta-ping`), avatar stack social proof, two floating badges (Licensed & 24/7 Emergency) |
+| **TrustBar** | `bg-slate-900` dark strip, 4 stats (years, rating, licensed, cities) with colored icon badges in dark pill containers |
+| **ServicesGrid** | Brand gradient card headers with centered service icon (when no photo), `card-lift` hover, numbered corner badge, arrow CTA in card footer |
+| **ReviewsWidget** | `bg-slate-900` section with radial brand glow, large rating display, testimonial cards from `site.testimonials` |
+| **ContactForm** | `bg-slate-50` inputs → white on focus, dashed file upload zone, send icon on submit button |
+| **ClickToCall** | `cta-ping` pulse ring animation, bold shadow |
+| **Footer** | Gradient accent top line, icon badge contact links (hover → brand bg), pill Google rating chip, service area pills |
+
+### CSS utilities (global.css)
+
+- `card-lift` — `translateY(-5px)` + layered brand shadow on hover (transition 220ms spring)
+- `cta-ping` — pulsing ring animation (`@keyframes cta-ping`) for phone CTAs; apply to a sibling `<span>` inside a `relative` wrapper
+- `hero-pattern` — dot-grid background (`radial-gradient` 28px repeat)
+- `round-sm/md/lg/full` — sets `--radius` CSS var used by all `rounded-[var(--radius)]` classes
+- `[data-reveal]` — scroll-reveal fade-up (spring easing `cubic-bezier(0.16,1,0.3,1)`)
+- `[data-reveal-stagger]` — staggered fade-up for children, up to 8 items (delays: 0.05s → 0.61s)
+
+### site.ts interfaces
+
+```ts
+SiteConfig      // top-level config object
+Service         // name, slug, shortDescription, description, image?
+SiteImages      // hero?, about?
+Testimonial     // name, role?, text, rating?   ← added June 2026
+SiteTheme       // headerStyle, heroLayout, heroPattern, footerStyle, showTrustBar, roundness
+```
+
+`site.testimonials` (optional `Testimonial[]`) feeds the ReviewsWidget cards.
+
+## Brand color & palette system
+
+`src/utils/palette.ts` derives an 11-step OKLCH tonal scale (50–950) from the
+single `site.brandColor` hex. `Base.astro` injects `--brand-50` through
+`--brand-950` plus semantic aliases (`--brand`, `--brand-dark`, etc.) as CSS
+custom properties on every page.
+
+Always reference via Tailwind arbitrary syntax: `bg-[var(--brand-50)]`,
+`text-[var(--brand-700)]`. Never hard-code hex values.
+
+## Image uploads
+
+No AI image generation. Every image is manually uploaded to `public/images/`.
+Always pass image paths through `resolveImage()` — never read `site.images.*`
+directly in a component, or a missing file silently breaks.
+
+## Known issues fixed
+
+- **`businessStory` property** — removed from `site.ts` (was not in `SiteConfig`
+  interface, missing trailing comma; caused TS build failure and Cloudflare
+  deployment to break). Fix: delete the line entirely.
+
+## Per-client build steps
+
+1. Replace every value in `site.ts` (business, phone, email, address, services, brandColor, etc.)
+2. Set `features` flags based on what the client purchased
+3. Drop client photos into `public/images/` and set matching paths in `site.ts`
+4. Replace placeholder copy in `about.astro` (`[Replace with...]` block)
+5. Set `RESEND_API_KEY` (and `TWILIO_*` if SMS active) in Cloudflare Pages env vars — never commit
+6. Run `npm run build` + `npx astro check` — both must be clean
+7. Push to client repo → Cloudflare auto-deploys
+8. Connect custom domain in Cloudflare Pages
+9. Submit sitemap to Google Search Console
+
+## What NOT to do
+
+- Don't introduce a database
+- Don't add a CMS unless explicitly sold as an add-on
+- Don't hard-code hex values — always use `--brand-*` CSS vars
+- Don't read `site.images.*` directly — always use `resolveImage()`
+- Don't commit synthetic/placeholder images to `public/images/`
+- Don't wire the contact form to any third-party backend (Formspree, Web3Forms, etc.)
+- Don't push to any branch other than `main`
